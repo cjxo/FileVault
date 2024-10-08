@@ -9,18 +9,84 @@
 
   <body>
     <header>
+      <a href="/"><h1 class="orangelike-colour">FileVault</h1></a>
       <nav>
-        <ul>
-          <li>Hey!</li>
+        <ul class="fv-header-links">
+          <li>
+            <a href="/sign-in"><button class="sign-in-btn">Sign In</button></a>
+          </li>
+          <li>
+            <a href="/sign-up"><button class="sign-up-btn">Sign Up</button></a>
+          </li>
         </ul>
       </nav>
     </header>
 
-    <h1>
-      Welcome to FileVault! 
-    </h1>
-    <p>a place where you can store personal files in the cloud. (TODO: homepage that advertises this thing nicely.)</p>
+    <main>
+      <section class="fv-introduction">
+        <div class="fv-welcome-and-p">
+          <h1 class="fv-welcome">Welcome to <span class="orangelike-colour">FileVault</span></h1>
+          <p>
+            FileVault offers a secure and reliable way to store, manage,
+            and share your files effortlessly. Whether you're an individual,
+            a small business, or a growing organization, FileVault provides a
+            seamless and intuitive platform for handling all your file storage needs.
+          </p>
+        </div>
 
-    <footer></footer>
+        <img class="fv-picture-demo" src="./icons/homepage.png" alt="homepage image" />
+      </section>
+
+      <section class="fv-features">
+        <div class="fv-welcome-and-p">
+          <h1 class="fv-welcome">Some of the <span class="orangelike-colour">best features</span></h1>
+          <p>
+            Sign up today and experience the simplicity of modern file storage. Upload, organize, and share your files securely—right from your dashboard.
+          </p>
+        </div>
+
+        <a href="/">
+          <button class="fv-front-signup-btn">Sign Up</button>
+        </a>
+
+        <div class="fv-feature-cards">
+          <div class="fv-feature-card">
+            <img class="icon" alt="shield icon" src="./icons/shield-outline.svg" />
+            <h3>Security</h3>
+            <p>
+              Your files are protected with the
+              latest encryption technologies,
+              ensuring they are safe from unauthorized access.
+            </p>
+          </div>
+
+          <div class="fv-feature-card">
+            <img class="icon" alt="folder icon" src="./icons/folder-outline.svg" />
+            <h3>Organized & Efficient</h3>
+            <p>
+              Keep your files organized with our folder management system, and
+              quickly search for files using advanced filtering options.
+            </p>
+          </div>
+
+          <div class="fv-feature-card">
+            <img class="icon" alt="earth icon" src="./icons/earth.svg" />
+            <h3>Accessible Anywhere</h3>
+            <p>
+              Access your files from any device, anywhere in the world, with our cloud-based platform.
+            </p>
+          </div>
+
+          <div class="fv-feature-card">
+            <img class="icon" alt="trending icon" src="./icons/trending-up.svg" />
+            <h3>Scalable</h3>
+            <p>
+              Whether you’re storing a few files or managing a large volume of data, FileVault scales with your needs without compromising performance.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>© 2024 FileVault. All rights reserved.</footer>
   </body>
 </html>
