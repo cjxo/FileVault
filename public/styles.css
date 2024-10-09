@@ -39,7 +39,7 @@ p {
   line-height: 1.6;
 }
 
-header {
+.fv-header-nav {
   padding: 16px 32px;
   display: flex;
   justify-content: space-between;
@@ -52,12 +52,24 @@ header {
   gap: 16px;
 }
 
-.sign-in-btn, .sign-up-btn {
+.sign-in-btn, .sign-up-btn, .fv-submit-btn {
   background-color: var(--bluish0);
   color: var(--bluish-white);
   border: 1px solid transparent;
   padding: 8px 16px;
   border-radius: 4px;
+  font-size: 16px;
+}
+
+.sign-in-btn:hover, .sign-up-btn:hover, .fv-submit-btn:hover {
+  background-color: #0518c7;
+}
+
+.fv-submit-btn {
+  margin-top: 8px;
+  border-radius: 12px;
+  border: 1px solid #020250;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 a {
@@ -65,7 +77,7 @@ a {
   color: black;
 }
 
-header h1 {
+.fv-header-nav h1 {
   font-size: 42px;
 }
 
@@ -88,13 +100,13 @@ main {
 }
 
 .fv-picture-demo {
-  width: 800px;
+  width: 700px;
   height: auto;
-  flex-shrink: 0;
 }
 
 .fv-welcome-and-p {
   max-width: 600px;
+  min-width: 200px;
 }
 
 .fv-welcome {
@@ -113,6 +125,10 @@ main {
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   border-radius: 8px;
   margin-top: 16px;
+}
+
+.fv-front-signup-btn:hover {
+  background-color: #0518c7;
 }
 
 .fv-feature-cards {
@@ -142,7 +158,88 @@ main {
   margin-bottom: 8px;
 }
 
+.fv-header-signup > h1 {
+  text-align: center;
+}
+
+.fv-signup-form {
+  display: flex;
+  flex-direction: column;
+
+  margin-left: auto;
+  margin-right: auto;
+
+  gap: 8px;
+  max-width: 600px;
+}
+
+.fv-label-input-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fv-label-input-pair label {
+  color: #0c0e1c;
+}
+
+.fv-label-input-pair input {
+  padding: 16px 8px;
+  border-radius: 8px;
+  border: 1px solid black;
+
+  box-shadow: inset 0px 0px 4px 0px rgba(0,0,0,0.1);
+}
+
 footer {
   padding: 24px 16px;
   text-align: center;
+}
+
+@media (width <= 1000px) { 
+  .fv-introduction {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .fv-picture-demo {
+    width: 480px;
+  }
+}
+
+@media (width <= 600px) {
+  .fv-welcome {
+    font-size: 18px;
+  }
+
+  .fv-welcome-and-p > p {
+    font-size: 10px;
+  }
+
+  .fv-feature-card > h3 {
+    font-size: 14px;
+  }
+
+  .fv-feature-card > p {
+    font-size: 10px;
+  }
+
+  .fv-header-nav {
+    flex-direction: column;
+    justify-content:center;
+  }
+
+  .fv-header-links {
+    padding: 0px;
+  }
+
+  footer {
+    font-size: 6px;
+  }
+}
+
+@media (width <= 400px) {
+  .fv-picture-demo {
+    width: 300px;
+  }
 }

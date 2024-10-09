@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>FileVault | Sign Up</title>
+  </head>
+  <body>
+    <header class="fv-header-nav">
+      <a href="/"><h1 class="orangelike-colour">FileVault</h1></a>
+      <nav>
+        <ul class="fv-header-links">
+          <li>
+            <p>Already have an account?</p>
+          </li>
+          <li>
+            <a href="/sign-in"><button class="sign-in-btn">Sign In</button></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <header class="fv-header-signup">
+      <h1>Create Your Account</h1>
+    </header>
+    <main>
+      <form class="fv-signup-form" action="/sign-up" method="POST">
+        <div class="fv-label-input-pair">
+          <label for="fv-email">Your Email</label>
+          <input type="email" name="email" id="fv-email" placeholder="youremail@domain.com" required />
+        </div>
+
+        <div class="fv-label-input-pair">
+          <label for="fv-email">Your Username</label>
+          <input type="text" name="username" id="fv-username" placeholder="CookieLover99" required />
+        </div>
+
+        <div class="fv-label-input-pair">
+          <label for="fv-password">Your Password</label>
+          <input type="password" name="password" id="fv-password" required />
+        </div>
+
+        <div class="fv-label-input-pair">
+          <label for="fv-confirm-password">Confirm Password</label>
+          <input type="password" name="confirm_password" id="fv-confirm-password" required />
+        </div>
+      
+        <button class="fv-submit-btn">Submit</button>
+      </form>
+    </main>
+    <footer>© 2024 FileVault. All rights reserved.</footer>
+  </body>
+</html>
