@@ -12,12 +12,18 @@
       <a href="/"><h1 class="orangelike-colour">FileVault</h1></a>
       <nav>
         <ul class="fv-header-links">
-          <li>
-            <a href="/sign-in"><button class="sign-in-btn">Sign In</button></a>
-          </li>
-          <li>
-            <a href="/sign-up"><button class="sign-up-btn">Sign Up</button></a>
-          </li>
+          <% if (!locals.user) { %>
+            <li>
+              <a href="/sign-in"><button class="sign-in-btn">Sign In</button></a>
+            </li>
+            <li>
+              <a href="/sign-up"><button class="sign-up-btn">Sign Up</button></a>
+            </li>
+          <% } else {%>
+            <li>
+              <a href="/sign-out"><button class="sign-up-btn">Sign Out</button></a>
+            </li>
+          <% } %>
         </ul>
       </nav>
     </header>

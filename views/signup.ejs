@@ -30,11 +30,19 @@
           <label for="fv-email">Your Email</label>
           <input type="email" name="email" id="fv-email" placeholder="youremail@domain.com" required />
         </div>
+        
+        <% if (locals.emailExists) { %>
+          <span class="fv-invalid-pword">Email already exists</span>
+        <% } %>
 
         <div class="fv-label-input-pair">
           <label for="fv-email">Your Username</label>
           <input type="text" name="username" id="fv-username" placeholder="CookieLover99" required />
         </div>
+        
+        <% if (locals.usernameExists) { %>
+          <span class="fv-invalid-pword">Username already exists</span>
+        <% } %>
 
         <div class="fv-label-input-pair">
           <label for="fv-password">Your Password</label>
@@ -45,6 +53,10 @@
           <label for="fv-confirm-password">Confirm Password</label>
           <input type="password" name="confirm_password" id="fv-confirm-password" required />
         </div>
+
+        <% if (locals.passwordsMatched === false) { %>
+          <span class="fv-invalid-pword">Passwords do not match</span>
+        <% } %>
       
         <button class="fv-submit-btn">Submit</button>
       </form>

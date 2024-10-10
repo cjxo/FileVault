@@ -158,6 +158,10 @@ main {
   margin-bottom: 8px;
 }
 
+.fv-invalid-pword {
+  color: red;
+}
+
 .fv-header-signup > h1 {
   text-align: center;
 }

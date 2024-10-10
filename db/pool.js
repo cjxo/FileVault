@@ -10,7 +10,6 @@ const pool = new pg.Pool({
 });
 
 pool.on('connect', (client) => {
-  console.log('connected successfully!');
 });
 
 pool.on('error', (err) => {

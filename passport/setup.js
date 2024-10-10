@@ -48,4 +48,25 @@ const fvSession = session({
   },
 });
 
-export default fvSession;
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const { rows } = await pool.query("SELECT * FROM fv_user WHERE id = $1;", [id]);
+    done(null, rows[0]);
+  } catch (err) {
+    done(err);
+  }
+});
+
+const authenticateUser = passport.authenticate("local", {
+  successRedirect: "/",
+  failureRedirect: "/sign-in?invalidCredentials=true"
+});
+
+export { 
+  fvSession,
+  authenticateUser,
+}

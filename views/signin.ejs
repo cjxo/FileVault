@@ -22,15 +22,19 @@
       <h1>Sign In To Your Account</h1>
     </header>
     <main>
-      <form class="fv-signup-form" action="/sign-up" method="POST">
+      <form class="fv-signup-form" action="/sign-in" method="POST">
         <div class="fv-label-input-pair">
-          <label for="fv-email">Your Email</label>
-          <input type="email" name="email" id="fv-email" placeholder="youremail@domain.com" required />
+          <label for="fv-username">Your Username</label>
+          <input type="text" name="username" id="fv-username" placeholder="CookieLover99" required />
         </div>
         <div class="fv-label-input-pair">
           <label for="fv-password">Your Password</label>
           <input type="password" name="password" id="fv-password" required />
         </div>
+
+        <% if (locals.invalidCredentials) { %>
+          <span class="fv-invalid-pword">Invalid credentials</span>
+        <% }%>
      
         <button class="fv-submit-btn">Submit</button>
       </form>
