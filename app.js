@@ -5,6 +5,7 @@ import pool from './db/pool.js';
 import { fvSession } from './passport/setup.js';
 import passport from 'passport';
 import idxRouter from './routes/index_route.js';
+import dashRouter from './routes/dashboard_route.js';
 
 const app = express();
 const directoryName = path.dirname(fileURLToPath(import.meta.url));
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/', idxRouter);
+app.use('/dashboard', dashRouter);
 
 app.use((err, req, res, next) => {
   console.error(err);

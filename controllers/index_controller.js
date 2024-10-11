@@ -2,7 +2,11 @@ import db from '../db/query.js';
 import bcrypt from 'bcryptjs';
 
 const get = (req, res) => {
-  res.render('index', { user: req.user });
+  if (req.user) {
+    res.redirect('/dashboard');
+  } else {
+    res.render('index');
+  }
 };
 
 const getSignUp = (req, res) => {
@@ -28,7 +32,7 @@ const getSignIn = (req, res) => {
   }
 
   const invalidCreds = req.query.invalidCredentials === 'true';
-  res.render('signin', { invalidCreds: invalidCreds });
+  res.render('signin', { invalidCredentials: invalidCreds });
 };
 
 const postSignUp = async (req, res, next) => {
