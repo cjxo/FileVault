@@ -6,6 +6,8 @@
 - [ ] Features Design
     - [ ] Once the user is signed in, redirect to 'Dashboard Route'
         - [ ] in this case, we have to make a dashboard route to /dashboard
+            - [ ] File Lister
+                - [ ] File Sorter based on category
         - [ ] profile section in dashboard
         - [ ] Upload section in dashboard
             - [ ] File details when clicked on file
