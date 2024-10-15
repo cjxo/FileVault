@@ -14,6 +14,27 @@
         <a href="/"><h1 class="orangelike-colour">FileVault</h1></a>
         <ul class="fv-side-bar-list">
           <li class="fv-side-bar-item">
+            <form>
+              <input
+                type="file"
+                id="fv-file-input-uploader"
+                multiple
+                style="display:none"
+              />
+ 
+              <button class="fv-file-input-select" type="button">
+                <img src="./icons/plus.svg" alt="plus" />
+                New File
+              </button>
+
+              <div class="fv-file-upload-submenu" style="display: none;">
+                <button>
+                </button>
+              </div>
+            </form>
+          </li>
+
+          <li class="fv-side-bar-item">
             <a href="/dashboard/all-files">
               <img src="./icons/file-multiple.svg" alt="file" />
               All Files
@@ -42,7 +63,7 @@
               <img src="./icons/logout.svg" alt="logout" />
               Sign Out
             </a>
-          </li>
+          </li> 
         </ul>
       </section>
 

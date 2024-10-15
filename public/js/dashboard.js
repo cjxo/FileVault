@@ -1,22 +1,38 @@
 const fv_sectDisplay           = document.querySelector(".fv-display-section");
 const fv_ulFileListCategories  = document.querySelectorAll(".fv-file-list");
+const fv_fileListerEntryBtns   = document.querySelectorAll(".fv-file-lister-entry > button");
+const fv_inpFileUploader       = document.querySelector("#fv-file-input-uploader");
+const fv_btnFileSelect         = document.querySelector(".fv-file-input-select");
+let fv_listerBtnsClickState    = 0;
 
-const testFiles      = [
+const testFiles                = [
   {
     name: "kickoff0",
     type: "PDF",
-    size: "1.2mb",
+    size: 1.2,
     shared: "Only Me",
-    uploaded: "07/12/24"
+    uploaded: new Date(),
   },
   {
     name: "kickoff1",
     type: "PDF",
-    size: "4.2mb",
-    shared: "Only Me",
-    uploaded: "10/12/24"
+    size: 4.2,
+    shared: "Anyone With Link",
+    uploaded: new Date(),
   }
-]
+];
+
+function fv_toLocaleDateString(date) {
+  return date.toLocaleDateString(
+    'en-US',
+    {
+      weekday: "short",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }
+  );
+}
 
 function fv_appendToLister(idx, li) {
   const lister = fv_ulFileListCategories[idx];
@@ -24,6 +40,8 @@ function fv_appendToLister(idx, li) {
 
   if ((lister.children.length % 2) === 0) {
     li.style.backgroundColor = "#F3F3F3";
+  } else {
+    li.style.backgroundColor = "#FFFFFF";
   }
 }
 
@@ -48,10 +66,74 @@ function fv_appendFileName(name) {
   fv_appendToLister(0, liFile);
 }
 
-testFiles.forEach(file => {
-  fv_appendFileName(file.name);
-  fv_appendToLister(1, fv_createLiFile(file.type));
-  fv_appendToLister(2, fv_createLiFile(file.size));
-  fv_appendToLister(3, fv_createLiFile(file.shared));
-  fv_appendToLister(4, fv_createLiFile(file.uploaded));
+function fv_sortFilesBy(idx, sortAscending) {
+  fv_ulFileListCategories.forEach(list => {
+    while (list.firstChild) {
+      list.removeChild(list.firstChild);
+    }
+  });
+
+  const comparer = sortAscending ? -1 : 1;
+  let files = null;
+  switch (idx) {
+    case 0: case 1: case 2: case 3: case 4: {
+      files = testFiles.sort((a, b) => {
+        if (Object.values(a)[idx] > Object.values(b)[idx]) {
+          return comparer;
+        }
+
+        if (Object.values(a)[idx] < Object.values(b)[idx]) {
+          return -comparer;
+        }
+
+        return 0;
+      });
+    } break;
+
+    default: {
+      files = testFiles; 
+    } break;
+  }
+
+  files.forEach(file => {
+    fv_appendFileName(file.name);
+    fv_appendToLister(1, fv_createLiFile(file.type));
+    fv_appendToLister(2, fv_createLiFile(file.size + "mb"));
+    fv_appendToLister(3, fv_createLiFile(file.shared));
+    fv_appendToLister(4, fv_createLiFile(fv_toLocaleDateString(file.uploaded)));
+  });
+}
+
+fv_btnFileSelect.addEventListener("click", (e) => {
+  fv_inpFileUploader.click();
+});
+
+fv_inpFileUploader.addEventListener("change", async (e) => {
+  const t = e.target;
+  if (t.files.length) {
+    console.log(t.files);
+
+    // TODO: https://developer.mozilla.org/en-US/docs/Web/API/FormData
+    // "multi-part form data"
+    // Use fetch APi
+    for (let idx = 0; idx < t.files.length; ++idx) {
+      const buf = await t.files[idx].arrayBuffer();
+      console.log(buf);
+    }
+  }
+});
+
+fv_sortFilesBy(99);
+
+fv_fileListerEntryBtns.forEach((btn, idx) => {
+  btn.addEventListener("click", () => {
+    const state = (fv_listerBtnsClickState & (1 << idx));
+    if (state) {
+      fv_listerBtnsClickState &= ~(1 << idx);
+    } else {
+      fv_listerBtnsClickState |= (1 << idx);
+    }
+
+    fv_sortFilesBy(idx, state !== 0);
+  });
 });
