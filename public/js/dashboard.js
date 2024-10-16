@@ -3,6 +3,7 @@ const fv_ulFileListCategories  = document.querySelectorAll(".fv-file-list");
 const fv_fileListerEntryBtns   = document.querySelectorAll(".fv-file-lister-entry > button");
 const fv_inpFileUploader       = document.querySelector("#fv-file-input-uploader");
 const fv_btnFileSelect         = document.querySelector(".fv-file-input-select");
+const fv_btnFileSubmit         = document.querySelector(".fv-file-input-select + button");
 let fv_listerBtnsClickState    = 0;
 
 const testFiles                = [
@@ -108,18 +109,47 @@ fv_btnFileSelect.addEventListener("click", (e) => {
   fv_inpFileUploader.click();
 });
 
-fv_inpFileUploader.addEventListener("change", async (e) => {
+fv_btnFileSubmit.addEventListener("click", (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData();
+
+  const files = fv_inpFileUploader.files;
+  console.log(files);
+  for (let idx = 0; idx < files.length; ++idx) {
+    formData.append(`uploaded_files`, files[idx]);
+  }
+
+  // https://developer.mozilla.org/en-US/docs/Web/API/RequestInit
+  fetch('/dashboard/upload', {
+    body: formData,
+    method: "POST",
+  })
+  .then((response) => {
+    return response.json();
+  })
+  .then(data => {
+    console.log(data);
+  })
+  .catch(err => {
+    console.error(err);
+  })
+});
+
+fv_inpFileUploader.addEventListener("change", (e) => {
   const t = e.target;
   if (t.files.length) {
-    console.log(t.files);
+    fv_btnFileSubmit.click();
 
-    // TODO: https://developer.mozilla.org/en-US/docs/Web/API/FormData
-    // "multi-part form data"
-    // Use fetch APi
+    /*
+    // - https://developer.mozilla.org/en-US/docs/Web/API/FormData
+    // - "multi-part form data"
+    // - Use fetch APi
+    // - https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications
     for (let idx = 0; idx < t.files.length; ++idx) {
       const buf = await t.files[idx].arrayBuffer();
       console.log(buf);
-    }
+    }*/
   }
 });
 
