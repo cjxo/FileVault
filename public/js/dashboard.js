@@ -125,15 +125,16 @@ fv_btnFileSubmit.addEventListener("click", (e) => {
     body: formData,
     method: "POST",
   })
-  .then((response) => {
-    return response.json();
-  })
-  .then(data => {
-    console.log(data);
-  })
-  .catch(err => {
-    console.error(err);
-  })
+  .then(response => response.json())
+  .then(data => { console.log(data) })
+  .catch(err => { console.error(err) });
+
+ /* 
+  fetch('/dashboard/upload', { method: "GET", })
+  .then(response => response.body)
+  .then(body => {
+    console.log(body);
+  });*/
 });
 
 fv_inpFileUploader.addEventListener("change", (e) => {

@@ -8,7 +8,9 @@
     - [X] in this case, we have to make a dashboard route to /dashboard
     - [ ] File Lister
         - [X] File Sorter based on category
-        - [ ] Upload section in dashboard
+        - [X] Upload section in dashboard
+        - [ ] Extract file type extension
+        - [ ] display uploaded fiels
     
     - [ ] profile section in dashboard
     - [ ] File details when clicked on file

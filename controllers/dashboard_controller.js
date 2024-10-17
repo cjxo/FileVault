@@ -15,7 +15,7 @@ const fv_getKeyValueFromData = (data, contentHeader) => {
     formBoundaryName = contentHeader.substring(formBoundaryIdx, endIdx);
   }
 
-  console.log(data);
+  //console.log(data);
   const filenameStr = "filename";
   let currentIdx = 0;
   let startIdx = 0;
@@ -93,11 +93,11 @@ const postUpload = async (req, res) => {
     body.push(chunk);
   })
   .on('end', () => {
-    body = Buffer.concat(body).toString();
+    body = Buffer.concat(body).toString('binary');
     const data = fv_getKeyValueFromData(body, req.headers['content-type']);
     let hasError = false;
     data.forEach(d => {
-      fs.writeFile(`./tmp_uploads/${d.filename}`, Buffer.from(d.data), err => {
+      fs.writeFile(`./tmp_uploads/${d.filename}`, Buffer.from(d.data, 'binary'), err => {
         if (err) {
           hasError = true;
         }
