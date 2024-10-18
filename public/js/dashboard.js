@@ -4,24 +4,9 @@ const fv_fileListerEntryBtns   = document.querySelectorAll(".fv-file-lister-entr
 const fv_inpFileUploader       = document.querySelector("#fv-file-input-uploader");
 const fv_btnFileSelect         = document.querySelector(".fv-file-input-select");
 const fv_btnFileSubmit         = document.querySelector(".fv-file-input-select + button");
-let fv_listerBtnsClickState    = 0;
 
-const testFiles                = [
-  {
-    name: "kickoff0",
-    type: "PDF",
-    size: 1.2,
-    shared: "Only Me",
-    uploaded: new Date(),
-  },
-  {
-    name: "kickoff1",
-    type: "PDF",
-    size: 4.2,
-    shared: "Anyone With Link",
-    uploaded: new Date(),
-  }
-];
+let fv_listerBtnsClickState  = 0;
+let fv_filesToDisplay        = [];
 
 function fv_toLocaleDateString(date) {
   return date.toLocaleDateString(
@@ -67,7 +52,7 @@ function fv_appendFileName(name) {
   fv_appendToLister(0, liFile);
 }
 
-function fv_sortFilesBy(idx, sortAscending) {
+function fv_sortFilesBy(array, idx, sortAscending) {
   fv_ulFileListCategories.forEach(list => {
     while (list.firstChild) {
       list.removeChild(list.firstChild);
@@ -78,7 +63,7 @@ function fv_sortFilesBy(idx, sortAscending) {
   let files = null;
   switch (idx) {
     case 0: case 1: case 2: case 3: case 4: {
-      files = testFiles.sort((a, b) => {
+      files = array.sort((a, b) => {
         if (Object.values(a)[idx] > Object.values(b)[idx]) {
           return comparer;
         }
@@ -92,17 +77,38 @@ function fv_sortFilesBy(idx, sortAscending) {
     } break;
 
     default: {
-      files = testFiles; 
+      files = array; 
     } break;
   }
 
   files.forEach(file => {
     fv_appendFileName(file.name);
     fv_appendToLister(1, fv_createLiFile(file.type));
-    fv_appendToLister(2, fv_createLiFile(file.size + "mb"));
+    fv_appendToLister(2, fv_createLiFile(file.size + " " + file.sizeType));
     fv_appendToLister(3, fv_createLiFile(file.shared));
-    fv_appendToLister(4, fv_createLiFile(fv_toLocaleDateString(file.uploaded)));
+    fv_appendToLister(4, fv_createLiFile(fv_toLocaleDateString(new Date(file.uploaded))));
   });
+}
+
+async function fv_fetchFilesToDisplay() {
+  try {
+    const response = await fetch('/dashboard/upload', {
+      method: "GET",
+      headers: {
+        'X-Requested-With': 'FetchAPI'
+      }
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function fv_updateFilesToDisplay() {
+  fv_filesToDisplay = await fv_fetchFilesToDisplay();
+  fv_sortFilesBy(fv_filesToDisplay, 0, true);
 }
 
 fv_btnFileSelect.addEventListener("click", (e) => {
@@ -126,35 +132,20 @@ fv_btnFileSubmit.addEventListener("click", (e) => {
     method: "POST",
   })
   .then(response => response.json())
-  .then(data => { console.log(data) })
-  .catch(err => { console.error(err) });
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
 
- /* 
-  fetch('/dashboard/upload', { method: "GET", })
-  .then(response => response.body)
-  .then(body => {
-    console.log(body);
-  });*/
+  fv_updateFilesToDisplay();
 });
 
 fv_inpFileUploader.addEventListener("change", (e) => {
   const t = e.target;
   if (t.files.length) {
     fv_btnFileSubmit.click();
-
-    /*
-    // - https://developer.mozilla.org/en-US/docs/Web/API/FormData
-    // - "multi-part form data"
-    // - Use fetch APi
-    // - https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications
-    for (let idx = 0; idx < t.files.length; ++idx) {
-      const buf = await t.files[idx].arrayBuffer();
-      console.log(buf);
-    }*/
   }
 });
 
-fv_sortFilesBy(99);
+fv_updateFilesToDisplay();
 
 fv_fileListerEntryBtns.forEach((btn, idx) => {
   btn.addEventListener("click", () => {
@@ -165,6 +156,6 @@ fv_fileListerEntryBtns.forEach((btn, idx) => {
       fv_listerBtnsClickState |= (1 << idx);
     }
 
-    fv_sortFilesBy(idx, state !== 0);
+    fv_sortFilesBy(fv_filesToDisplay, idx, state !== 0);
   });
 });

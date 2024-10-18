@@ -1,4 +1,6 @@
 import fs from "node:fs";
+import fsp from "node:fs/promises";
+import path from "node:path";
 
 const fv_getKeyValueFromData = (data, contentHeader) => {
   const result = [];
@@ -15,7 +17,7 @@ const fv_getKeyValueFromData = (data, contentHeader) => {
     formBoundaryName = contentHeader.substring(formBoundaryIdx, endIdx);
   }
 
-  //console.log(data);
+  //console.log(contentHeader);
   const filenameStr = "filename";
   let currentIdx = 0;
   let startIdx = 0;
@@ -97,7 +99,7 @@ const postUpload = async (req, res) => {
     const data = fv_getKeyValueFromData(body, req.headers['content-type']);
     let hasError = false;
     data.forEach(d => {
-      fs.writeFile(`./tmp_uploads/${d.filename}`, Buffer.from(d.data, 'binary'), err => {
+      fs.writeFile(`./tmp_uploads/${d.filename}`, Buffer.from(d.data, 'binary'), 'binary', err => {
         if (err) {
           hasError = true;
         }
@@ -122,7 +124,69 @@ const postUpload = async (req, res) => {
   });
 };
 
+const getUpload = async (req, res) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+    if (req.get('X-Requested-With') === "FetchAPI") {
+      const dirs = await fsp.readdir('./tmp_uploads/');
+      const result = []
+      dirs.forEach(file => {
+        const stat = fs.lstatSync(path.join('./tmp_uploads', file));
+        if (stat.isFile()) {
+          let name = file;
+          let extension = "";
+          let size = stat.size;
+          let sizeType = "bytes";
+
+          const extensionIdx = file.lastIndexOf('.');
+          if (extensionIdx !== -1) {
+            name = file.substring(0, extensionIdx);
+            extension = file.substring(extensionIdx + 1, file.length);
+          }
+
+          if (size < (50 * 1024)) {
+          } else if (size < (50000 * 1024)) {
+            size /= 1024;
+            sizeType = "kb";
+          } else if (size < (50000000 * 1024)) {
+            size = (size / 1024) / 1024;
+            sizeType = "mb";
+          } else {
+            size = ((size / 1024) / 1024) / 1024;
+            sizeType = "gb";
+          }
+
+          result.push({
+            name: name,
+            type: extension,
+            size: size,
+            sizeType: sizeType,
+            shared: "Anyone With Link", // todo: query data base for shared data,
+            uploaded: stat.mtime,
+          });
+        }
+      });
+
+      res.send(result);
+    } else {
+      res.redirect("/");
+    }
+  } catch (err) {
+    res.send(`
+      {
+        "status": 500,
+        "message": "Internal server error; failed to read uploaded files from disk."
+      }
+    `);
+  }
+};
+
 export default {
   get,
   postUpload,
+  getUpload
 };
