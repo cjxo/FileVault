@@ -27,6 +27,12 @@ const SQL = `
     parent_folder_id INTEGER REFERENCES fv_folder(id) ON DELETE SET NULL,
     created_by INTEGER REFERENCES fv_user (id)
   );
+
+  CREATE TABLE IF NOT EXISTS fv_recent_uploads (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name text[6],
+    user_id INTEGER UNIQUE REFERENCES fv_user (id)
+  );
 `;
 
 const main = async () => {
@@ -41,11 +47,19 @@ const main = async () => {
   });
 
   await client.connect();
+  
   try {
     await client.query(SQL);
   } catch (err) {
     console.log("Error: ", err);
   }
+  /*
+  const SQL2 = `
+    SELECT name FROM fv_recent_uploads
+    WHERE user_id = 1;
+  `;
+  const result = await client.query(SQL2);
+  console.log(...result.rows[0].name);*/
   await client.end();
 };
 

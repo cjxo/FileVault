@@ -4,6 +4,7 @@ const fv_fileListerEntryBtns   = document.querySelectorAll(".fv-file-lister-entr
 const fv_inpFileUploader       = document.querySelector("#fv-file-input-uploader");
 const fv_btnFileSelect         = document.querySelector(".fv-file-input-select");
 const fv_btnFileSubmit         = document.querySelector(".fv-file-input-select + button");
+const fv_ulRecentUploads       = document.querySelector(".fv-recent-files-lister");
 
 let fv_listerBtnsClickState  = 0;
 let fv_filesToDisplay        = [];
@@ -84,7 +85,7 @@ function fv_sortFilesBy(array, idx, sortAscending) {
   files.forEach(file => {
     fv_appendFileName(file.name);
     fv_appendToLister(1, fv_createLiFile(file.type));
-    fv_appendToLister(2, fv_createLiFile(file.size + " " + file.sizeType));
+    fv_appendToLister(2, fv_createLiFile(file.size.toFixed(0) + " " + file.sizeType));
     fv_appendToLister(3, fv_createLiFile(file.shared));
     fv_appendToLister(4, fv_createLiFile(fv_toLocaleDateString(new Date(file.uploaded))));
   });
@@ -109,6 +110,37 @@ async function fv_fetchFilesToDisplay() {
 async function fv_updateFilesToDisplay() {
   fv_filesToDisplay = await fv_fetchFilesToDisplay();
   fv_sortFilesBy(fv_filesToDisplay, 0, true);
+
+  fetch('/dashboard/recent-upload', {
+    method: 'GET',
+  })
+  .then(response => response.json())
+  .then(files => {
+    while (fv_ulRecentUploads.firstChild) {
+      fv_ulRecentUploads.firstChild.remove();
+    }
+
+    files.forEach(file => {
+      const li      = document.createElement("li");
+      const a       = document.createElement("a");
+      const button  = document.createElement("button");
+      const svg     = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      const use     = document.createElementNS("http://www.w3.org/2000/svg", "use");
+      const p       = document.createElement("p");
+      p.textContent = file;
+     
+      a.setAttribute("href", "#");
+      use.setAttribute("href", "#fv-file-svg-sym");
+      li.setAttribute("class", "fv-recent-file");
+      
+      svg.appendChild(use);
+      button.append(svg, p);
+      a.appendChild(button);
+      li.appendChild(a);
+      fv_ulRecentUploads.appendChild(li);
+    });
+  })
+  .catch(err => console.error(err));
 }
 
 fv_btnFileSelect.addEventListener("click", (e) => {
@@ -133,7 +165,7 @@ fv_btnFileSubmit.addEventListener("click", (e) => {
   })
   .then(response => response.json())
   .then(data => console.log(data))
-  .catch(err => console.error(err));
+  .catch(err => console.error(err)); 
 
   fv_updateFilesToDisplay();
 });

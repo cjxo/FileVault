@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
+import db from "../db/query.js";
 
 const fv_getKeyValueFromData = (data, contentHeader) => {
   const result = [];
@@ -104,6 +105,8 @@ const postUpload = async (req, res) => {
           hasError = true;
         }
       });
+
+      db.createNewRecentUpload(d.filename, req.user.id);
     }); 
 
     if (hasError) {
@@ -185,8 +188,28 @@ const getUpload = async (req, res) => {
   }
 };
 
+const getRecentUploads = async (req, res) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+    const result = await db.getRecentUploads(req.user.id);
+    res.send(result);
+  } catch (err) {
+    res.send(`
+      {
+        "status": 500,
+        "message": "Internal server error; failed to read recent uploaded files from disk."
+      }
+    `);
+  }
+};
+
 export default {
   get,
   postUpload,
-  getUpload
+  getUpload,
+  getRecentUploads,
 };

@@ -9,11 +9,14 @@
     - [ ] File Lister
         - [X] File Sorter based on category
         - [X] Upload section in dashboard
-        - [ ] Extract file type extension
-        - [ ] display uploaded fiels
+        - [X] Extract file type extension
+        - [X] display uploaded fiels
+        - [ ] Recent Files display
+        - [ ] Instead of requesting entire files from server on upload,
+              request the most recent upload instead!
+        - [ ] File DB for file flags
     
+    - [ ] folder section in dashboard (also creation)
     - [ ] profile section in dashboard
     - [ ] File details when clicked on file
-    - [ ] All files section in dashboard, listed chronologically
-    - [ ] folder section in dashboard (also creation)
     - [ ] Share feature

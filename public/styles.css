@@ -366,6 +366,39 @@ input[type="checkbox"] {
   gap: 16px;
 }
 
+.fv-recent-files-lister {
+  margin-bottom: 16px;
+  margin-top: 8px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.fv-recent-file svg {
+  width: 96px;
+  height: 96px;
+  fill: grey;
+}
+
+.fv-recent-file {
+  max-width: fit-content;
+}
+
+.fv-recent-file button {
+  background-color: transparent;
+  border: 1px solid grey;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.fv-recent-file p {
+  text-align: center;
+}
+
+.fv-recent-file button:hover {
+  border: 1px solid var(--bluish0);
+}
+
 footer {
   padding: 24px 16px;
   text-align: center;
