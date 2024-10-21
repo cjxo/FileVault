@@ -112,6 +112,7 @@ async function fv_fetchFilesToDisplay() {
 
 async function fv_updateFilesToDisplay() {
   fv_filesToDisplay = await fv_fetchFilesToDisplay();
+  console.log(fv_filesToDisplay);
   fv_sortFilesBy(fv_filesToDisplay, 0, true);
 
   const filesSorted = fv_filesToDisplay.sort((a, b) => {
@@ -166,10 +167,11 @@ fv_btnFileSubmit.addEventListener("click", (e) => {
     method: "POST",
   })
   .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(err => console.error(err)); 
-
-  fv_updateFilesToDisplay();
+  .then(data => {
+    console.log(data);
+    fv_updateFilesToDisplay();
+  })
+  .catch(err => console.error(err));
 });
 
 fv_inpFileUploader.addEventListener("change", (e) => {

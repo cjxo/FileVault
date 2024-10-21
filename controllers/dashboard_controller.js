@@ -104,7 +104,7 @@ const postUpload = async (req, res) => {
         if (err) {
           hasError = true;
         } else {
-          db.createNewRecentUpload(d.filename, req.user.id);
+          db.createNewUpload(d.filename, req.user.id);
         }
       });
     }); 
@@ -197,28 +197,8 @@ const getUpload = async (req, res) => {
   }
 };
 
-const getRecentUploads = async (req, res) => {
-  if (!req.user) {
-    res.status(401).send(`{ "401": "unauthorized" }`);
-    return;
-  }
-
-  try {
-    const result = await db.getRecentUploads(req.user.id);
-    res.send(result);
-  } catch (err) {
-    res.send(`
-      {
-        "status": 500,
-        "message": "Internal server error; failed to read recent uploaded files from disk."
-      }
-    `);
-  }
-};
-
 export default {
   get,
   postUpload,
   getUpload,
-  getRecentUploads,
 };
