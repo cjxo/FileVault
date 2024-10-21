@@ -16,6 +16,7 @@
               request the most recent upload instead!
         - [ ] File DB for file flags
         - [ ] Deal With file links. That is, when we click a file, open a separate page for display.
+            - [ ] Ability to delete files.
     
     - [ ] folder section in dashboard (also creation)
     - [ ] profile section in dashboard

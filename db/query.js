@@ -43,10 +43,32 @@ const getFileIDFromFilename = async (filename, user_id) => {
   }
 };
 
+const deleteFileFromIDAndReturnFileName = async (file_id, user_id) => {
+  const DELETESQL = `
+    DELETE FROM fv_uploaded_file
+    WHERE (uploaded_by = $1) AND (id = $2);
+  `;
+  
+  const SELECTSQL = `
+    SELECT name FROM fv_uploaded_file
+    WHERE (uploaded_by = $1) AND (id = $2);
+  `;
+
+  const selectResult = await pool.query(SELECTSQL, [user_id, file_id]);
+  if (!selectResult) {
+    return null;
+  }
+
+  await pool.query(DELETESQL, [user_id, file_id]);
+
+  return selectResult.rows[0].name;
+};
+
 export default {
   getUserFromUsername,
   getUserFromEmail,
   createNewUser,
   createNewUpload,
   getFileIDFromFilename,
+  deleteFileFromIDAndReturnFileName,
 };

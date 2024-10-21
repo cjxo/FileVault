@@ -43,7 +43,7 @@ const fv_getKeyValueFromData = (data, contentHeader) => {
           result.push({ filename: data.substring(startSubstrIdx, currentIdx) });
         }
 
-        CLRFConsecutiveCount = 0;
+      CLRFConsecutiveCount = 0;
       } break;
 
       case '\r': {
@@ -182,7 +182,6 @@ const getUpload = async (req, res) => {
         }
       }
 
-      console.log(result);
       res.send(result);
     } else {
       res.redirect("/");
@@ -197,8 +196,42 @@ const getUpload = async (req, res) => {
   }
 };
 
+const deleteFile = async (req, res) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+    const filename = await db.deleteFileFromIDAndReturnFileName(parseInt(req.params.id), req.user.id);
+    if (filename === null) {
+      throw new Error("file does not exist!");
+    }
+
+    fs.unlink(path.join("./tmp_uploads/" + filename), (err) => {
+      if (err) throw err;
+      
+      res.send(`
+        {
+          "status": 200,
+          "message": "successfully deleted file."
+        }
+      `);
+    });
+  } catch (err) {
+    console.log(err);
+    res.send(`
+      {
+        "status": 500,
+        "message": "Internal server error; failed to delete uploaded file from disk."
+      }
+    `);
+  } 
+};
+
 export default {
   get,
   postUpload,
   getUpload,
+  deleteFile,
 };

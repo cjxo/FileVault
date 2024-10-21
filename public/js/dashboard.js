@@ -5,9 +5,13 @@ const fv_inpFileUploader       = document.querySelector("#fv-file-input-uploader
 const fv_btnFileSelect         = document.querySelector(".fv-file-input-select");
 const fv_btnFileSubmit         = document.querySelector(".fv-file-input-select + button");
 const fv_ulRecentUploads       = document.querySelector(".fv-recent-files-lister");
+const fv_btnMoreOptions        = document.querySelector(".fv-uploaded-files-header > div > button");
+const fv_divDropDown           = document.querySelector(".fv-options-dropdown");
+const fv_btnDeleteDD           = document.querySelector(".fv-options-dropdown > button");
 
 let fv_listerBtnsClickState  = 0;
-let fv_filesToDisplay        = [];
+let fv_filesToDisplay          = [];
+let fv_checkBoxCheckedCount    = 0;
 
 function fv_toLocaleDateString(date) {
   return date.toLocaleDateString(
@@ -54,6 +58,21 @@ function fv_appendFileName(name, id) {
   a.appendChild(p);
   liFile.append(inpCheckBox, a);
   fv_appendToLister(0, liFile);
+
+  inpCheckBox.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      fv_listerBtnsClickState += 1;
+    } else {
+      fv_listerBtnsClickState -= 1;
+    }
+
+    if (fv_listerBtnsClickState > 0) {
+      fv_btnMoreOptions.style.display = "flex";
+    } else {
+      fv_btnMoreOptions.style.display = "none";
+      fv_divDropDown.style.display = "none";
+    }
+  });
 }
 
 function fv_sortFilesBy(array, idx, sortAscending) {
@@ -145,6 +164,34 @@ async function fv_updateFilesToDisplay() {
     fv_ulRecentUploads.appendChild(li);
   }
 }
+
+fv_btnMoreOptions.addEventListener("click", (e) => {
+  if ((fv_divDropDown.style.display === "none") || (fv_divDropDown.style.display === "")) {
+    fv_divDropDown.style.display = "block";
+  } else {
+    fv_divDropDown.style.display = "none";
+  }
+});
+
+fv_btnDeleteDD.addEventListener("click", async (e) => {
+  const nameCate = fv_ulFileListCategories[0];
+  const deleteLinks = nameCate.querySelectorAll("input:checked + a");
+
+  try {
+    for (let delidx = 0; delidx < deleteLinks.length; ++delidx) {
+      const a = deleteLinks[delidx];
+      const idx = a.href.lastIndexOf("/");
+      const newHref = "dashboard/files/delete" + a.href.substring(idx, a.href.length);
+
+      const response = await fetch(newHref, { method: "DELETE" })
+      const data = await response.json();
+      console.log(data);
+    }
+    fv_updateFilesToDisplay();
+  } catch (err) {
+    console.error(err)
+  }
+});
 
 fv_btnFileSelect.addEventListener("click", (e) => {
   fv_inpFileUploader.click();
