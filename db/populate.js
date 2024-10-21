@@ -4,8 +4,7 @@ import 'dotenv/config';
 const SQL = `
   DROP TABLE IF EXISTS fv_folder;
   DROP TABLE IF EXISTS fv_uploaded_file;
-  DROP TABLE IF EXISTS fv_user;
-
+  DROP TABLE IF EXISTS fv_user
   CREATE TABLE IF NOT EXISTS fv_user (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     username VARCHAR(128) UNIQUE NOT NULL,
@@ -26,12 +25,6 @@ const SQL = `
     created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     parent_folder_id INTEGER REFERENCES fv_folder(id) ON DELETE SET NULL,
     created_by INTEGER REFERENCES fv_user (id)
-  );
-
-  CREATE TABLE IF NOT EXISTS fv_recent_uploads (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    name text[6],
-    user_id INTEGER UNIQUE REFERENCES fv_user (id)
   );
 `;
 

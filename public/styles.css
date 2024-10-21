@@ -359,11 +359,12 @@ input[type="checkbox"] {
 .fv-file-list > li {
   padding: 16px 8px;
   border-bottom: 1px solid #AAAAAA;
-}
-
-.fv-file-list > li {
   display: flex;
   gap: 16px;
+}
+
+.fv-file-list > li > a:hover > p {
+  text-decoration: underline var(--bluish0);
 }
 
 .fv-recent-files-lister {

@@ -41,15 +41,18 @@ function fv_createLiFile(name) {
   return liFile;
 }
 
-function fv_appendFileName(name) {
+function fv_appendFileName(name, id) {
   const liFile              = document.createElement("li");
+  const a                   = document.createElement("a");
   const p                   = document.createElement("p");
   const inpCheckBox         = document.createElement("input");
   p.textContent             = name;
   liFile.style.paddingLeft  = "8px";
   
+  a.setAttribute("href", `dashboard/files/${id}`);
   inpCheckBox.setAttribute("type", "checkbox");
-  liFile.append(inpCheckBox, p);
+  a.appendChild(p);
+  liFile.append(inpCheckBox, a);
   fv_appendToLister(0, liFile);
 }
 
@@ -83,7 +86,7 @@ function fv_sortFilesBy(array, idx, sortAscending) {
   }
 
   files.forEach(file => {
-    fv_appendFileName(file.name);
+    fv_appendFileName(file.name, file.id);
     fv_appendToLister(1, fv_createLiFile(file.type));
     fv_appendToLister(2, fv_createLiFile(file.size.toFixed(0) + " " + file.sizeType));
     fv_appendToLister(3, fv_createLiFile(file.shared));
@@ -111,36 +114,35 @@ async function fv_updateFilesToDisplay() {
   fv_filesToDisplay = await fv_fetchFilesToDisplay();
   fv_sortFilesBy(fv_filesToDisplay, 0, true);
 
-  fetch('/dashboard/recent-upload', {
-    method: 'GET',
-  })
-  .then(response => response.json())
-  .then(files => {
-    while (fv_ulRecentUploads.firstChild) {
-      fv_ulRecentUploads.firstChild.remove();
-    }
+  const filesSorted = fv_filesToDisplay.sort((a, b) => {
+    return b.id - a.id;
+  });
 
-    files.forEach(file => {
-      const li      = document.createElement("li");
-      const a       = document.createElement("a");
-      const button  = document.createElement("button");
-      const svg     = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      const use     = document.createElementNS("http://www.w3.org/2000/svg", "use");
-      const p       = document.createElement("p");
-      p.textContent = file;
-     
-      a.setAttribute("href", "#");
-      use.setAttribute("href", "#fv-file-svg-sym");
-      li.setAttribute("class", "fv-recent-file");
-      
-      svg.appendChild(use);
-      button.append(svg, p);
-      a.appendChild(button);
-      li.appendChild(a);
-      fv_ulRecentUploads.appendChild(li);
-    });
-  })
-  .catch(err => console.error(err));
+  while (fv_ulRecentUploads.firstChild) {
+    fv_ulRecentUploads.firstChild.remove();
+  }
+
+  const loopCount = filesSorted.length < 6 ? filesSorted.length : 6;
+  for (let idx = 0; idx < loopCount; ++idx) {
+    const file = filesSorted[idx];
+    const li      = document.createElement("li");
+    const a       = document.createElement("a");
+    const button  = document.createElement("button");
+    const svg     = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const use     = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    const p       = document.createElement("p");
+    p.textContent = file.name + "." + file.type;
+   
+    a.setAttribute("href", `dashboard/files/${file.id}`);
+    use.setAttribute("href", "#fv-file-svg-sym");
+    li.setAttribute("class", "fv-recent-file");
+    
+    svg.appendChild(use);
+    button.append(svg, p);
+    a.appendChild(button);
+    li.appendChild(a);
+    fv_ulRecentUploads.appendChild(li);
+  }
 }
 
 fv_btnFileSelect.addEventListener("click", (e) => {

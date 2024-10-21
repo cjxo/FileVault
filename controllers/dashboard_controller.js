@@ -103,10 +103,10 @@ const postUpload = async (req, res) => {
       fs.writeFile(`./tmp_uploads/${d.filename}`, Buffer.from(d.data, 'binary'), 'binary', err => {
         if (err) {
           hasError = true;
+        } else {
+          db.createNewRecentUpload(d.filename, req.user.id);
         }
       });
-
-      db.createNewRecentUpload(d.filename, req.user.id);
     }); 
 
     if (hasError) {
@@ -136,8 +136,10 @@ const getUpload = async (req, res) => {
   try {
     if (req.get('X-Requested-With') === "FetchAPI") {
       const dirs = await fsp.readdir('./tmp_uploads/');
-      const result = []
-      dirs.forEach(file => {
+      const result = [];
+
+      for (let idx = 0; idx < dirs.length; ++idx) {
+        const file = dirs[idx];
         const stat = fs.lstatSync(path.join('./tmp_uploads', file));
         if (stat.isFile()) {
           let name = file;
@@ -163,6 +165,11 @@ const getUpload = async (req, res) => {
             sizeType = "gb";
           }
 
+          const id = await db.getFileIDFromFilename(file, req.user.id);
+          if (id === null) {
+            throw new Error("failed to fetch ID from filename!");
+          }
+
           result.push({
             name: name,
             type: extension,
@@ -170,10 +177,12 @@ const getUpload = async (req, res) => {
             sizeType: sizeType,
             shared: "Anyone With Link", // todo: query data base for shared data,
             uploaded: stat.mtime,
+            id: id,
           });
         }
-      });
+      }
 
+      console.log(result);
       res.send(result);
     } else {
       res.redirect("/");
