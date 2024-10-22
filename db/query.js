@@ -13,10 +13,12 @@ const getUserFromEmail = async (email) => {
 const createNewUser = async (email, username, password) => {
   const SQL = `
     INSERT INTO fv_user (email, username, password)
-    VALUES ($1, $2, $3);
+    VALUES ($1, $2, $3)
+    RETURNING id;
   `;
 
-  await pool.query(SQL, [email, username, password]);
+  const { rows } = await pool.query(SQL, [email, username, password]);
+  return rows[0].id;
 };
 
 const createNewUpload = async (filename, upload_by_id) => {
@@ -38,6 +40,20 @@ const getFileIDFromFilename = async (filename, user_id) => {
   const { rows } = await pool.query(SQL, [user_id, filename]);
   if (rows) {
     return rows[0].id;
+  } else {
+    return null;
+  }
+};
+
+const getFilenameFromFileID = async (file_id, user_id) => {
+  const SQL = `
+    SELECT name FROM fv_uploaded_file
+    WHERE (uploaded_by = $1) AND (id = $2);
+  `;
+
+  const { rows } = await pool.query(SQL, [user_id, file_id]);
+  if (rows) {
+    return rows[0].name;
   } else {
     return null;
   }
@@ -70,5 +86,6 @@ export default {
   createNewUser,
   createNewUpload,
   getFileIDFromFilename,
+  getFilenameFromFileID,
   deleteFileFromIDAndReturnFileName,
 };

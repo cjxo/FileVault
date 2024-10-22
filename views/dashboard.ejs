@@ -3,75 +3,14 @@
 <html lang="en-US">
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="./styles.css">
-    <script src="./js/dashboard.js" defer></script>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/js/dashboard.js" defer></script>
     <title>FileVault | Dashboard</title>
   </head>
 
   <body>
     <main class="fv-dashboard">
-      <section class="fv-side-bar">
-        <a href="/"><h1 class="orangelike-colour">FileVault</h1></a>
-        <ul class="fv-side-bar-list">
-          <li class="fv-side-bar-item">
-            <form>
-              <input
-                type="file"
-                id="fv-file-input-uploader"
-                multiple
-                style="display:none"
-              />
- 
-              <button class="fv-file-input-select" type="button">
-                <img src="./icons/plus.svg" alt="plus" />
-                New File
-              </button>
-
-              <button
-                type="submit"
-                style="display:none">
-              </button>
-
-              <div class="fv-file-upload-submenu" style="display: none;">
-                <button>
-                </button>
-              </div>
-            </form>
-          </li>
-
-          <li class="fv-side-bar-item">
-            <a href="/dashboard/all-files">
-              <img src="./icons/file-multiple.svg" alt="file" />
-              All Files
-            </a>
-          </li>
-          <li class="fv-side-bar-item">
-            <a href="/dashboard/folders">
-              <img src="./icons/folder-multiple.svg" alt="folder" />
-              Folders
-            </a>
-          </li>
-          <li class="fv-side-bar-item">
-            <a href="/dashboard/favourites">
-              <img src="./icons/heart.svg" alt="favourite" />
-              Favorites
-            </a>
-          </li>
-          <li class="fv-side-bar-item">
-            <a href="/dashboard/settings">
-              <img src="./icons/settings.svg" alt="settings" />
-              Settings
-            </a>
-          </li>
-          <li class="fv-side-bar-item">
-            <a href="/sign-out">
-              <img src="./icons/logout.svg" alt="logout" />
-              Sign Out
-            </a>
-          </li> 
-        </ul>
-      </section>
-
+      <%- include('dashboard-sidebar.ejs', { includeAddFile: true }) %>
       <section class="fv-display-section">
         <header class="fv-display-header">
           <form class="fv-search">
@@ -85,7 +24,7 @@
 
           <div class="fv-profile-area">
             <div>
-              <img src="./icons/face-woman-profile.svg" alt="logout" width="32px" height="32px">
+              <img src="/icons/face-woman-profile.svg" alt="logout" width="32px" height="32px">
             </div>
           </div>
         </header>
@@ -98,12 +37,12 @@
           <div>
             <div class="fv-options-dropdown">
               <button>
-                <img src="./icons/delete.svg" alt="delete" />
+                <img src="/icons/delete.svg" alt="delete" />
                 <p>Delete</p>
               </button>
             </div>
             <button style="display:none">
-              <img src="./icons/dots-vertical.svg" alt="options" />
+              <img src="/icons/dots-vertical.svg" alt="options" />
             </button>
           </div>
         </div>

@@ -211,8 +211,111 @@ main {
   font-size: 42px;
 }
 
-.fv-display-section {
+.fv-display-section, .fv-file-display-section {
   flex-grow: 10;
+}
+
+.fv-file-display-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.fv-file-display-section > h1 {
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.fv-file-pic {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fv-file-details > h3 {
+  font-weight: normal;
+  font-size: 24px;
+}
+
+.fv-file-details {
+  display: flex;
+  gap: 32px;
+}
+
+.fv-file-meat {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+
+  gap: 16px;
+}
+
+.fv-select-input {
+  cursor: pointer;
+  border: 1px solid black;
+  background-color: transparent;
+  border-radius: 4px;
+  padding: 8px 8px;
+}
+
+.fv-file-meat > button {
+  padding: 8px 8px;
+  border: 1px solid black;
+  border-radius: 4px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fv-download-btn {
+  background-color: transparent;
+}
+
+.fv-delete-btn {
+  background-color: #b52727;
+  color: var(--bluish-white);
+
+  > svg {
+    fill: var(--bluish-white);
+  }
+}
+
+.fv-file-meat > button > svg {
+  width: 24px;
+  height: 24px;
+}
+
+.fv-file-meat > button:hover {
+  background-color: var(--bluish0);
+  color: var(--bluish-white);
+
+  > svg {
+    fill: var(--bluish-white);
+  }
+}
+
+.fv-file-detail {
+  margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.fv-file-detail > img {
+  width: 24px;
+  height: 24px;
+}
+
+.fv-file-label-value > p:last-child {
+  color: gray;
+}
+
+.fv-file-quick-details {
+  flex-grow: 1;
+}
+
+.fv-file-pic > svg {
+  fill: grey;
 }
 
 .fv-side-bar-item {

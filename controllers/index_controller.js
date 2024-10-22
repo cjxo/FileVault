@@ -1,5 +1,6 @@
 import db from '../db/query.js';
 import bcrypt from 'bcryptjs';
+import fs from 'node:fs';
 
 const get = (req, res) => {
   if (req.user) {
@@ -53,7 +54,15 @@ const postSignUp = async (req, res, next) => {
       }
 
       const saltAndHash = await bcrypt.hash(req.body.password, 10);
-      await db.createNewUser(req.body.email, req.body.username, saltAndHash);
+      const id = await db.createNewUser(req.body.email, req.body.username, saltAndHash);
+
+      if (!fs.existsSync("./tmp_uploads")) {
+        fs.mkdirSync("./tmp_uploads");
+      }
+
+      if (!fs.existsSync(`./tmp_uploads/${id}`)) {
+        fs.mkdirSync(`./tmp_uploads/${id}`);
+      }
       res.redirect("/sign-in");
     } catch (err) {
       next(err);

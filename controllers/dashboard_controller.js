@@ -19,10 +19,10 @@ const fv_getKeyValueFromData = (data, contentHeader) => {
   }
 
   //console.log(contentHeader);
-  const filenameStr = "filename";
-  let currentIdx = 0;
-  let startIdx = 0;
-  let CLRFConsecutiveCount = 0;
+  const filenameStr         = "filename";
+  let currentIdx            = 0;
+  let startIdx              = 0;
+  let CLRFConsecutiveCount  = 0;
   while (currentIdx < data.length) {
     startIdx = currentIdx;
 
@@ -75,6 +75,63 @@ const fv_getKeyValueFromData = (data, contentHeader) => {
   return result;
 }
 
+const fv_getFileDetails = async (filename, user_id, includeFileID) => {
+  const pathToFile = path.join(`./tmp_uploads/${user_id}`, filename);
+  const stat       = fs.lstatSync(pathToFile);
+
+  if (stat.isFile()) {
+    let name        = filename;
+    let type        = "";
+    let size        = stat.size;
+    let sizeType    = "bytes";
+
+    const extensionIdx = filename.lastIndexOf('.');
+    if (extensionIdx !== -1) {
+      name = filename.substring(0, extensionIdx);
+      type = filename.substring(extensionIdx + 1, filename.length);
+    }
+
+    if (size < (50 * 1024)) {
+    } else if (size < (50000 * 1024)) {
+      size     = size / 1024;
+      sizeType = "kb";
+    } else if (size < (50000000 * 1024)) {
+      size     = (size / 1024) / 1024;
+      sizeType = "mb";
+    } else {
+      size     = ((size / 1024) / 1024) / 1024;
+      sizeType = "gb";
+    }
+    
+    if (includeFileID) {
+      const id = await db.getFileIDFromFilename(filename, user_id);
+      if (id === null) {
+        throw new Error("failed to fetch ID from filename!");
+      }
+      return {
+        name: name,
+        type: type,
+        size: size,
+        sizeType: sizeType,
+        shared: "Anyone With Link", // todo: query data base for shared data,
+        lastModified: stat.mtime,
+        id: id,
+      };
+    } else {
+      return {
+        name: name,
+        type: type,
+        size: size,
+        sizeType: sizeType,
+        shared: "Anyone With Link", // todo: query data base for shared data,
+        lastModified: stat.mtime,
+      };
+    }
+  } else {
+    return null;
+  }
+};
+
 const get = (req, res) => {
   if (!req.user) {
     res.redirect('/sign-in');
@@ -95,22 +152,23 @@ const postUpload = async (req, res) => {
   req.on('data', chunk => {
     body.push(chunk);
   })
-  .on('end', () => {
+  .on('end', async () => {
     body = Buffer.concat(body).toString('binary');
     const data = fv_getKeyValueFromData(body, req.headers['content-type']);
     let hasError = false;
-    data.forEach(d => {
-      fs.writeFile(`./tmp_uploads/${d.filename}`, Buffer.from(d.data, 'binary'), 'binary', err => {
+    for (let dataIdx = 0; dataIdx < data.length; ++dataIdx) {
+      const d = data[dataIdx];
+      fs.writeFile(`./tmp_uploads/${req.user.id}/${d.filename}`, Buffer.from(d.data, 'binary'), 'binary', err => {
         if (err) {
           hasError = true;
-        } else {
-          db.createNewUpload(d.filename, req.user.id);
         }
       });
-    }); 
+      
+      await db.createNewUpload(d.filename, req.user.id);
+    }
 
     if (hasError) {
-      res.send(`
+      res.status(500).send(`
         {
           "status": 500,
           "message": "Internal server error; failed to write uploaded file onto disk."
@@ -135,50 +193,14 @@ const getUpload = async (req, res) => {
 
   try {
     if (req.get('X-Requested-With') === "FetchAPI") {
-      const dirs = await fsp.readdir('./tmp_uploads/');
+      const dirs   = await fsp.readdir(`./tmp_uploads/${req.user.id}`);
       const result = [];
 
       for (let idx = 0; idx < dirs.length; ++idx) {
         const file = dirs[idx];
-        const stat = fs.lstatSync(path.join('./tmp_uploads', file));
-        if (stat.isFile()) {
-          let name = file;
-          let extension = "";
-          let size = stat.size;
-          let sizeType = "bytes";
-
-          const extensionIdx = file.lastIndexOf('.');
-          if (extensionIdx !== -1) {
-            name = file.substring(0, extensionIdx);
-            extension = file.substring(extensionIdx + 1, file.length);
-          }
-
-          if (size < (50 * 1024)) {
-          } else if (size < (50000 * 1024)) {
-            size /= 1024;
-            sizeType = "kb";
-          } else if (size < (50000000 * 1024)) {
-            size = (size / 1024) / 1024;
-            sizeType = "mb";
-          } else {
-            size = ((size / 1024) / 1024) / 1024;
-            sizeType = "gb";
-          }
-
-          const id = await db.getFileIDFromFilename(file, req.user.id);
-          if (id === null) {
-            throw new Error("failed to fetch ID from filename!");
-          }
-
-          result.push({
-            name: name,
-            type: extension,
-            size: size,
-            sizeType: sizeType,
-            shared: "Anyone With Link", // todo: query data base for shared data,
-            uploaded: stat.mtime,
-            id: id,
-          });
+        const fileDetails = await fv_getFileDetails(file, req.user.id, true);
+        if (fileDetails !== null) {
+          result.push(fileDetails);
         }
       }
 
@@ -187,7 +209,8 @@ const getUpload = async (req, res) => {
       res.redirect("/");
     }
   } catch (err) {
-    res.send(`
+    console.log(err);
+    res.status(500).send(`
       {
         "status": 500,
         "message": "Internal server error; failed to read uploaded files from disk."
@@ -208,7 +231,7 @@ const deleteFile = async (req, res) => {
       throw new Error("file does not exist!");
     }
 
-    fs.unlink(path.join("./tmp_uploads/" + filename), (err) => {
+    fs.unlink(path.join(`./tmp_uploads/${req.user.id}`, filename), (err) => {
       if (err) throw err;
       
       res.send(`
@@ -220,7 +243,7 @@ const deleteFile = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.send(`
+    res.status(500).send(`
       {
         "status": 500,
         "message": "Internal server error; failed to delete uploaded file from disk."
@@ -229,9 +252,31 @@ const deleteFile = async (req, res) => {
   } 
 };
 
+const getFile = async (req, res, next) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  // 1. Get file details
+  // 2. Send to user
+  try {
+    const filename = await db.getFilenameFromFileID(parseInt(req.params.id), req.user.id);
+    if (!filename) {
+      throw new Error("Unable to get filename from FileID.");
+    }
+
+    const fileDetails = await fv_getFileDetails(filename, req.user.id, false);
+    res.render("dashboard-file", { fileDetails: fileDetails });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   get,
   postUpload,
   getUpload,
   deleteFile,
+  getFile,
 };

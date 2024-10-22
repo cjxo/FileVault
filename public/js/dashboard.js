@@ -109,7 +109,7 @@ function fv_sortFilesBy(array, idx, sortAscending) {
     fv_appendToLister(1, fv_createLiFile(file.type));
     fv_appendToLister(2, fv_createLiFile(file.size.toFixed(0) + " " + file.sizeType));
     fv_appendToLister(3, fv_createLiFile(file.shared));
-    fv_appendToLister(4, fv_createLiFile(fv_toLocaleDateString(new Date(file.uploaded))));
+    fv_appendToLister(4, fv_createLiFile(fv_toLocaleDateString(new Date(file.lastModified))));
   });
 }
 
@@ -187,7 +187,11 @@ fv_btnDeleteDD.addEventListener("click", async (e) => {
       const data = await response.json();
       console.log(data);
     }
-    fv_updateFilesToDisplay();
+    
+    await fv_updateFilesToDisplay();
+
+    fv_btnMoreOptions.style.display = "none";
+    fv_divDropDown.style.display = "none";
   } catch (err) {
     console.error(err)
   }
@@ -197,7 +201,7 @@ fv_btnFileSelect.addEventListener("click", (e) => {
   fv_inpFileUploader.click();
 });
 
-fv_btnFileSubmit.addEventListener("click", (e) => {
+fv_btnFileSubmit.addEventListener("click", async (e) => {
   e.preventDefault();
   
   const formData = new FormData();
@@ -209,16 +213,18 @@ fv_btnFileSubmit.addEventListener("click", (e) => {
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/API/RequestInit
-  fetch('/dashboard/upload', {
-    body: formData,
-    method: "POST",
-  })
-  .then(response => response.json())
-  .then(data => {
+  try {
+    const response = await fetch('/dashboard/upload', {
+      body: formData,
+      method: "POST",
+    });
+    
+    const data = await response.json();
     console.log(data);
     fv_updateFilesToDisplay();
-  })
-  .catch(err => console.error(err));
+  } catch (err) {
+    console.error(err);
+  }
 });
 
 fv_inpFileUploader.addEventListener("change", (e) => {
