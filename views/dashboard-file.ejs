@@ -73,18 +73,18 @@
             </div>
 
             <!--  PRob. shange this to links!-->
-            <button class="fv-download-btn">
+            <a href="/dashboard/files/download/<%= fileDetails.id %>" class="fv-download-btn">
               <svg>
                 <use xlink:href="#fv-file-dload-sym" />
               </svg>
               <p>Download File</p>
-            </button>
-            <button class="fv-delete-btn">
+            </a>
+            <a href="/dashboard/files/delete/<%= fileDetails.id %>" class="fv-delete-btn">
               <svg>
                 <use xlink:href="#fv-file-delete-sym" />
               </svg>
               <p>Delete File<p>
-            </button>
+            </a>
           </div>
         </div>
       </section>

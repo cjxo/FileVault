@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use((req, res, next) => {
-  console.log(req.user);
+  //console.log(req.user);
   next();
 });
 

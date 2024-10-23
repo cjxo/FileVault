@@ -2,6 +2,7 @@ import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
 import db from "../db/query.js";
+import mime from 'mime-types';
 
 const fv_getKeyValueFromData = (data, contentHeader) => {
   const result = [];
@@ -83,6 +84,7 @@ const fv_getFileDetails = async (filename, user_id, includeFileID) => {
     let name        = filename;
     let type        = "";
     let size        = stat.size;
+    let sizeRaw     = stat.size;
     let sizeType    = "bytes";
 
     const extensionIdx = filename.lastIndexOf('.');
@@ -113,6 +115,7 @@ const fv_getFileDetails = async (filename, user_id, includeFileID) => {
         type: type,
         size: size,
         sizeType: sizeType,
+        sizeBytes: sizeRaw,
         shared: "Anyone With Link", // todo: query data base for shared data,
         lastModified: stat.mtime,
         id: id,
@@ -123,6 +126,7 @@ const fv_getFileDetails = async (filename, user_id, includeFileID) => {
         type: type,
         size: size,
         sizeType: sizeType,
+        sizeBytes: sizeRaw,
         shared: "Anyone With Link", // todo: query data base for shared data,
         lastModified: stat.mtime,
       };
@@ -266,8 +270,60 @@ const getFile = async (req, res, next) => {
       throw new Error("Unable to get filename from FileID.");
     }
 
-    const fileDetails = await fv_getFileDetails(filename, req.user.id, false);
-    res.render("dashboard-file", { fileDetails: fileDetails });
+    const fileDetails = await fv_getFileDetails(filename, req.user.id, false)
+    fileDetails.id = req.params.id;
+    if (req.get('X-Requested-With') === "FetchAPI") {
+      res.send(fileDetails);
+    } else {
+      res.render("dashboard-file", { fileDetails: fileDetails });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+const downloadFile = async (req, res, next) => {
+  console.log(req.params);
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+    const filename = await db.getFilenameFromFileID(parseInt(req.params.id), req.user.id);
+    if (!filename) {
+      throw new Error("Unable to get filename from FileID.");
+    }
+
+    const filepath = path.join(`./tmp_uploads/${req.user.id}/${filename}`);
+    if (!fs.existsSync(filepath)) {
+      throw new Error("file doesn't exist");
+    }
+
+    const mimeType = mime.lookup(filename) || 'application/octet-stream';
+    const details = await fv_getFileDetails(filename, req.user.id, false);
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader('Content-Length', details.sizeBytes);
+
+    // https://www.freecodecamp.org/news/node-js-streams-everything-you-need-to-know-c9141306be93/
+    const stream = fs.createReadStream(filepath);
+
+    stream.on('error', (err) => {
+      throw err;
+    });
+
+    stream.pipe(res);
+
+    /*
+    fs.readFile(filepath, (err, data) => {
+      if (err) {
+        throw err;
+      }
+      
+      res.send(data);
+    });*/
+
   } catch (err) {
     next(err);
   }
@@ -279,4 +335,5 @@ export default {
   getUpload,
   deleteFile,
   getFile,
+  downloadFile,
 };

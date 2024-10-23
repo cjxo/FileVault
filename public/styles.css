@@ -255,9 +255,11 @@ main {
   background-color: transparent;
   border-radius: 4px;
   padding: 8px 8px;
+  font-size: 14px;
 }
 
-.fv-file-meat > button {
+.fv-file-meat > a, .fv-file-meat > button {
+  font-size: 14px;
   padding: 8px 8px;
   border: 1px solid black;
   border-radius: 4px;
@@ -280,12 +282,12 @@ main {
   }
 }
 
-.fv-file-meat > button > svg {
+.fv-file-meat svg {
   width: 24px;
   height: 24px;
 }
 
-.fv-file-meat > button:hover {
+.fv-file-meat > a:hover, .fv-file-meat > button:hover {
   background-color: var(--bluish0);
   color: var(--bluish-white);
 

@@ -9,5 +9,6 @@ dashRouter.post('/upload', dash.postUpload);
 dashRouter.get('/upload', dash.getUpload);
 dashRouter.delete('/files/delete/:id', dash.deleteFile);
 dashRouter.get('/files/:id', dash.getFile);
+dashRouter.get('/files/download/:id/', dash.downloadFile);
 
 export default dashRouter;
