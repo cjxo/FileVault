@@ -2,6 +2,9 @@ const fv_secFolderDisplayGrid = document.querySelector(".fv-folder-display-grid"
 const fv_btnAddFolder         = document.querySelector(".fv-file-input-select");
 
 fv_btnAddFolder.addEventListener("click", e => {
+  if (fv_secFolderDisplayGrid.querySelector("input") !== null) {
+    return;
+  }
   // temporaries
   const a       = document.createElement("a");
   const svg     = document.createElementNS("http://www.w3.org/2000/svg", "svg");
