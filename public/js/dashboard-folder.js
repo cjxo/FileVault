@@ -26,8 +26,12 @@ fv_btnAddFolder.addEventListener("click", e => {
     fv_secFolderDisplayGrid.appendChild(a);
   }
 
+  inp.addEventListener("input", () => {
+    inp.style.color = "black";
+  });
+
   inp.addEventListener("keydown", (e) => {
-    if (!e.repeat && (e.key === "Enter")) {
+    if (!e.repeat && (e.key === "Enter") && (inp.value !== "")) {
       fetch("/dashboard/folders/create", {
         method: "POST",
         headers: {
@@ -43,11 +47,16 @@ fv_btnAddFolder.addEventListener("click", e => {
           a.setAttribute("href", `folders/${data.id}`);
           a.appendChild(h3);
           inp.remove(); 
+        } else {
+          inp.value = "Folder Already Exists!";
+          inp.style.color = "red";
         }
       })
       .catch(err => {
         console.log(err);
       });
+    } else if (!e.repeat && (e.key === "Escape")) {
+      a.remove();
     }
   });
 });
