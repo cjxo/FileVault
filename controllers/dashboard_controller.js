@@ -104,11 +104,11 @@ const fv_getFileDetails = async (filename, user_id, includeFileID) => {
       size     = ((size / 1024) / 1024) / 1024;
       sizeType = "gb";
     }
-    
+
     if (includeFileID) {
       const id = await db.getFileIDFromFilename(filename, user_id);
       if (id === null) {
-        throw new Error("failed to fetch ID from filename!");
+  throw new Error("failed to fetch ID from filename!");
       }
       return {
         name: name,
@@ -329,6 +329,63 @@ const downloadFile = async (req, res, next) => {
   }
 };
 
+const getFolders = async (req, res, next) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+    const folders = await db.getFolders(req.user.id);
+    console.log(folders);
+    res.render("dashboard-folders", { folders: folders.reverse() });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const checkFolderNameExists = async (req, res, next) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+    const result = await db.checkFolderNameExists(req.body.value, req.user.id);
+    // DIDNT KNOW ABOUT THIS: https://expressjs.com/en/api.html#res.json
+
+    res.json({ exists: result });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const createNewFolder = async (req, res, next) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+   const exists = await db.checkFolderNameExists(req.body.value, req.user.id);
+    // DIDNT KNOW ABOUT THIS: https://expressjs.com/en/api.html#res.json
+    if (!exists) {
+      const id = await db.createFolder(req.body.value, req.user.id);
+      res.json(
+        {
+          created: true,
+          id: id,
+        }
+      );
+    } else {
+      res.json({ create: false });
+    }
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   get,
   postUpload,
@@ -336,4 +393,7 @@ export default {
   deleteFile,
   getFile,
   downloadFile,
+  getFolders,
+  checkFolderNameExists,
+  createNewFolder,
 };

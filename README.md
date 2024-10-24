@@ -15,15 +15,16 @@
         - [X] Instead of requesting entire files from server on upload,
               request the most recent upload instead!
         - [ ] File DB for file flags
-        - [ ] Deal With file links. That is, when we click a file, open a separate page for display.
+        - [X] Deal With file links. That is, when we click a file, open a separate page for display.
             - [X] Ability to delete files.
-            - [ ] Open in separate page
-            - [ ] Figure out how to display file contents on screen.
+            - [X] Open in separate page
+            - [X] Figure out how to display file contents on screen.
                 - [X] File Display UI
-                - [ ] File DLoad Functionality
-                - [ ] File Delete functionality
+                - [X] File DLoad Functionality
+                - [X] File Delete functionality
     
     - [ ] folder section in dashboard (also creation)
     - [ ] profile section in dashboard
     - [ ] File details when clicked on file
     - [ ] Share feature
+    - [ ] Supabase

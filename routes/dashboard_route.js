@@ -10,5 +10,8 @@ dashRouter.get('/upload', dash.getUpload);
 dashRouter.delete('/files/delete/:id', dash.deleteFile);
 dashRouter.get('/files/:id', dash.getFile);
 dashRouter.get('/files/download/:id/', dash.downloadFile);
+dashRouter.get('/folders', dash.getFolders);
+dashRouter.post('/folders/create', dash.createNewFolder);
+dashRouter.post('/folders/exists', dash.checkFolderNameExists);
 
 export default dashRouter;

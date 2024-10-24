@@ -2,9 +2,10 @@ import pg from 'pg';
 import 'dotenv/config';
 
 const SQL = `
-  DROP TABLE IF EXISTS fv_folder;
-  DROP TABLE IF EXISTS fv_uploaded_file;
-  DROP TABLE IF EXISTS fv_user
+  -- DROP TABLE IF EXISTS fv_folder_file;
+  -- DROP TABLE IF EXISTS fv_folder;
+  -- DROP TABLE IF EXISTS fv_uploaded_file;
+  -- DROP TABLE IF EXISTS fv_user
   CREATE TABLE IF NOT EXISTS fv_user (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     username VARCHAR(128) UNIQUE NOT NULL,
@@ -23,8 +24,15 @@ const SQL = `
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name VARCHAR(255) UNIQUE NOT NULL,
     created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    parent_folder_id INTEGER REFERENCES fv_folder(id) ON DELETE SET NULL,
+    -- parent_folder_id INTEGER REFERENCES fv_folder(id) ON DELETE SET NULL,
     created_by INTEGER REFERENCES fv_user (id)
+  );
+
+  CREATE TABLE IF NOT EXISTS fv_folder_file (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    file_id INTEGER REFERENCES fv_uploaded_file(id) ON DELETE CASCADE,
+    folder_id INTEGER REFERENCES fv_folder(id) ON DELETE CASCADE,
+    UNIQUE (file_id, folder_id)
   );
 `;
 

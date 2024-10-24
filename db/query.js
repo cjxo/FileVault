@@ -80,6 +80,40 @@ const deleteFileFromIDAndReturnFileName = async (file_id, user_id) => {
   return selectResult.rows[0].name;
 };
 
+const checkFolderNameExists = async (name, user_id) => {
+  const SQL = `
+    SELECT name FROM fv_folder
+    WHERE (name = $1) AND (created_by = $2);
+  `;
+
+  const { rows } = await pool.query(SQL, [name, user_id]);
+  if (rows.length) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const createFolder = async (name, user_id) => {
+  const SQL = `
+    INSERT INTO fv_folder (name, created_by)
+    VALUES ($1, $2)
+    RETURNING id;
+  `;
+
+  const { rows } = await pool.query(SQL, [name, user_id]);
+  return rows[0].id;
+};
+
+const getFolders = async (user_id) => {
+  const SQL = `
+    SELECT * FROM fv_folder
+    WHERE created_by = $1;
+  `;
+  const { rows } = await pool.query(SQL, [user_id]);
+  return rows;
+};
+
 export default {
   getUserFromUsername,
   getUserFromEmail,
@@ -88,4 +122,7 @@ export default {
   getFileIDFromFilename,
   getFilenameFromFileID,
   deleteFileFromIDAndReturnFileName,
+  checkFolderNameExists,
+  createFolder,
+  getFolders,
 };

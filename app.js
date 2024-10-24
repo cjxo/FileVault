@@ -6,6 +6,7 @@ import { fvSession } from './passport/setup.js';
 import passport from 'passport';
 import idxRouter from './routes/index_route.js';
 import dashRouter from './routes/dashboard_route.js';
+import db from './db/query.js';
 
 const app = express();
 const directoryName = path.dirname(fileURLToPath(import.meta.url));
@@ -18,8 +19,9 @@ app.use(express.static(path.join(directoryName, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   //console.log(req.user);
+  //console.log(await db.checkFolderNameExists("HI", req.user.id));
   next();
 });
 
