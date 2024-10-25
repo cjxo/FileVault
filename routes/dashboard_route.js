@@ -13,5 +13,6 @@ dashRouter.get('/files/download/:id/', dash.downloadFile);
 dashRouter.get('/folders', dash.getFolders);
 dashRouter.post('/folders/create', dash.createNewFolder);
 dashRouter.post('/folders/exists', dash.checkFolderNameExists);
+dashRouter.post('/folders/add', dash.addFilesToFolder);
 
 export default dashRouter;

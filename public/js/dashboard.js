@@ -6,8 +6,9 @@ const fv_btnFileSelect         = document.querySelector(".fv-file-input-select")
 const fv_btnFileSubmit         = document.querySelector(".fv-file-input-select + button");
 const fv_ulRecentUploads       = document.querySelector(".fv-recent-files-lister");
 const fv_btnMoreOptions        = document.querySelector(".fv-uploaded-files-header > div > button");
-const fv_divDropDown           = document.querySelector(".fv-options-dropdown");
-const fv_btnDeleteDD           = document.querySelector(".fv-options-dropdown > button");
+const fv_divDropDown           = document.querySelector(".fv-options-dropdown.fv-dd-general");
+const fv_divDropDownFolder     = document.querySelector(".fv-options-dropdown.fv-dd-folder");
+const fv_btnDDGenerals         = document.querySelectorAll(".fv-options-dropdown.fv-dd-general > button");
 
 let fv_listerBtnsClickState  = 0;
 let fv_filesToDisplay          = [];
@@ -167,13 +168,14 @@ async function fv_updateFilesToDisplay() {
 
 fv_btnMoreOptions.addEventListener("click", (e) => {
   if ((fv_divDropDown.style.display === "none") || (fv_divDropDown.style.display === "")) {
-    fv_divDropDown.style.display = "block";
+    fv_divDropDown.style.display = "flex";
   } else {
     fv_divDropDown.style.display = "none";
   }
+  fv_divDropDownFolder.style.display = "none";
 });
 
-fv_btnDeleteDD.addEventListener("click", async (e) => {
+fv_btnDDGenerals[0].addEventListener("click", async (e) => {
   const nameCate = fv_ulFileListCategories[0];
   const deleteLinks = nameCate.querySelectorAll("input:checked + a");
 
@@ -196,6 +198,68 @@ fv_btnDeleteDD.addEventListener("click", async (e) => {
     console.error(err)
   }
 });
+
+fv_btnDDGenerals[1].addEventListener("mouseenter", e => {
+  fv_divDropDownFolder.style.display = "flex";
+});
+
+let fv_amazingGlbTimeoutHack;
+fv_btnDDGenerals[1].addEventListener("mouseleave", e => { 
+  fv_amazingGlbTimeoutHack = setTimeout(() => {
+    fv_divDropDownFolder.style.display = "none";
+  }, 1000);
+});
+
+fv_divDropDownFolder.addEventListener("mouseenter", e=> {
+  clearTimeout(fv_amazingGlbTimeoutHack)
+});
+
+fv_divDropDownFolder.addEventListener("mouseleave", e => {
+  fv_divDropDownFolder.style.display = "none";
+});
+
+fv_divDropDownFolder
+  .querySelectorAll("button")
+  .forEach(button => {
+    button.addEventListener("click", (e) => {
+      const nameCate = fv_ulFileListCategories[0];
+      const selected = nameCate.querySelectorAll("input:checked + a");
+
+      try {
+        const ids = [];
+
+        selected.forEach(a => {
+          const idx = a.href.lastIndexOf("/");
+          ids.push(parseInt(a.href.substring(idx + 1, a.href.length)));
+        });
+
+        fetch("dashboard/folders/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ folder: button.textContent, fileIds: ids }),
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(err => console.error(err));
+      } catch (err) {
+        console.error(err)
+      }
+
+      /*
+      fetch("dashboard/folders/add", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: button.textContent }),
+      })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(err => console.error(err));*/
+    });
+  });
 
 fv_btnFileSelect.addEventListener("click", (e) => {
   fv_inpFileUploader.click();

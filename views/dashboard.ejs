@@ -35,10 +35,20 @@
         <div class="fv-uploaded-files-header">
           <h3>Uploaded Files</h3>
           <div>
-            <div class="fv-options-dropdown">
+            <div class="fv-options-dropdown fv-dd-folder">
+              <% folders.forEach(folder => { %>
+                <button><%= folder.name %></button>
+              <% }); %>
+            </div>
+
+            <div class="fv-options-dropdown fv-dd-general">
               <button>
                 <img src="/icons/delete.svg" alt="delete" />
                 <p>Delete</p>
+              </button>
+              <button>
+                <img src="/icons/folder-n.svg" alt="folder" />
+                <p>Add To Folder</p>
               </button>
             </div>
             <button style="display:none">

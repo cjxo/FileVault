@@ -136,13 +136,18 @@ const fv_getFileDetails = async (filename, user_id, includeFileID) => {
   }
 };
 
-const get = (req, res) => {
+const get = async (req, res, next) => {
   if (!req.user) {
     res.redirect('/sign-in');
     return;
   }
 
-  res.render('dashboard', { user: req.user });
+  try {
+    const folders = await db.getFolders(req.user.id);
+    res.render('dashboard', { user: req.user, folders: folders.reverse() });
+  } catch (err) {
+    next(err);
+  }
 };
 
 // https://nodejs.org/en/learn/modules/anatomy-of-an-http-transaction
@@ -386,6 +391,34 @@ const createNewFolder = async (req, res, next) => {
   }
 };
 
+const deleteFolderFromName = async (req, res, next) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+    await db.deleteFolderFromName(req.body.name, req.user.id);
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const addFilesToFolder = async (req, res, next) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+    await db.addFilesToFolder(req.body.folder, req.body.fileIds, req.user.id);
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   get,
   postUpload,
@@ -396,4 +429,5 @@ export default {
   getFolders,
   checkFolderNameExists,
   createNewFolder,
+  addFilesToFolder,
 };

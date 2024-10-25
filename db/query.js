@@ -114,6 +114,36 @@ const getFolders = async (user_id) => {
   return rows;
 };
 
+const deleteFolderFromName = async (name, user_id) => {
+  const SQL = `
+    DELETE FROM fv_folder
+    WHERE created_by = $1 AND name = $2;
+  `;
+  await pool.query(SQL, [user_id, name]);
+};
+
+const addFilesToFolder = async (name, fileIDS, user_id) => {
+  const SQL0 = `
+    SELECT id FROM fv_folder
+    WHERE created_by = $1 AND name = $2;
+  `
+
+  const SQL1 = `
+    INSERT INTO fv_folder_file (file_id, folder_id)
+    VALUES ($1, $2)
+    ON CONFLICT DO NOTHING;
+  `;
+
+  const folder = await pool.query(SQL0, [user_id, name]);
+  if (folder.rows.length === 0) {
+    throw new Error("Folder doesn't exist!");
+  }
+
+  for (let idx = 0; idx < fileIDS.length; ++idx) {
+    await pool.query(SQL1, [fileIDS[idx], folder.rows[0].id]);
+  }
+};
+
 export default {
   getUserFromUsername,
   getUserFromEmail,
@@ -125,4 +155,6 @@ export default {
   checkFolderNameExists,
   createFolder,
   getFolders,
+  deleteFolderFromName,
+  addFilesToFolder,
 };

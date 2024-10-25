@@ -546,6 +546,12 @@ input[type="checkbox"] {
   background-color: #e1e1fa;
   padding: 12px;
   border-radius: 8px;
+  flex-direction: column;
+  width: 164px;
+}
+
+.fv-dd-folder {
+  right: 600%;
 }
 
 .fv-options-dropdown > button {
