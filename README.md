@@ -24,9 +24,10 @@
                 - [X] File Delete functionality
     
     - [ ] folder section in dashboard (also creation)
-        - [ ] Add file to folder.
-        - [ ] Open FOlder page.
+        - [X] Add file to folder.
+        - [X] Open FOlder page.
         - [ ] Delete Folder.
+        - [ ] Remove file on folder
     - [ ] profile section in dashboard
     - [ ] File details when clicked on file
     - [ ] Share feature

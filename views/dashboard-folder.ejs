@@ -14,20 +14,16 @@
       <section class="fv-display-section">
         <h1 class="fv-page-title">Folder View<span>|</span> <span><%= folder.name %></span></h1>
         
-        <ul class="fv-file-lister-box">
+        <div class="fv-folder-display-grid">
           <% folder.files.forEach(file => { %>
-          <li class="fv-file-lister-box-entry">
-            <a href="/dashboard/files/<%= file.file_id %>">
-              <button>
-                <svg>
-                  <use xlink:href="#fv-file-svg-sym" />
-                </svg>
-                <p><%= file.name %></p>
-              </button>
-            </a>
-          </li>
+          <a href="/dashboard/files/<%= file.file_id %>" class="fv-folder-entry">
+            <svg>
+              <use xlink:href="#fv-file-svg-sym" />
+            </svg>
+            <h3><%= file.name %></h3>
+          </a>
           <% }); %> 
-        </ul>
+        </div>
       </section>
     </main>
   </body>
