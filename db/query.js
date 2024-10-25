@@ -144,6 +144,21 @@ const addFilesToFolder = async (name, fileIDS, user_id) => {
   }
 };
 
+const getFilesFromFolderID = async (folder_id, user_id) => {
+  const SQL = `
+    SELECT ff.id, ff.file_id, uf.name FROM fv_folder_file AS ff
+    INNER JOIN fv_uploaded_file as uf
+    ON ff.file_id = uf.id
+    WHERE (uf.uploaded_by = $1) AND (ff.folder_id = $2)
+    ORDER BY ff.file_id ASC;
+  `;
+
+  const { rows } = await pool.query(SQL, [user_id, folder_id]);
+
+  const folderName = await pool.query(`SELECT name FROM fv_folder WHERE (id = $1) AND (created_by = $2)`, [folder_id, user_id])
+  return { name: folderName.rows[0].name, files: rows };
+};
+
 export default {
   getUserFromUsername,
   getUserFromEmail,
@@ -157,4 +172,5 @@ export default {
   getFolders,
   deleteFolderFromName,
   addFilesToFolder,
+  getFilesFromFolderID,
 };

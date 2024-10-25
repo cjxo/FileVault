@@ -419,6 +419,22 @@ const addFilesToFolder = async (req, res, next) => {
   }
 };
 
+const viewFolder = async (req, res, next) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+    console.log(req.params.id);
+    const folder = await db.getFilesFromFolderID(req.params.id, req.user.id);
+    console.log(folder);
+    res.render("dashboard-folder", { folder: folder });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   get,
   postUpload,
@@ -430,4 +446,5 @@ export default {
   checkFolderNameExists,
   createNewFolder,
   addFilesToFolder,
+  viewFolder,
 };
