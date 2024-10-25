@@ -467,7 +467,7 @@ input[type="checkbox"] {
   text-decoration: underline var(--bluish0);
 }
 
-.fv-recent-files-lister {
+.fv-file-lister-box {
   margin-bottom: 16px;
   margin-top: 8px;
   display: flex;
@@ -475,28 +475,28 @@ input[type="checkbox"] {
   flex-wrap: wrap;
 }
 
-.fv-recent-file svg {
+.fv-file-lister-box-entry svg {
   width: 96px;
   height: 96px;
   fill: grey;
 }
 
-.fv-recent-file {
+.fv-file-lister-box-entry {
   max-width: fit-content;
 }
 
-.fv-recent-file button {
+.fv-file-lister-box-entry button {
   background-color: transparent;
   border: 1px solid grey;
   padding: 16px;
   border-radius: 8px;
 }
 
-.fv-recent-file p {
+.fv-file-lister-box-entry p {
   text-align: center;
 }
 
-.fv-recent-file button:hover {
+.fv-file-lister-box-entry button:hover {
   border: 1px solid var(--bluish0);
 }
 

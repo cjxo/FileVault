@@ -10,10 +10,24 @@
 
   <body>
     <main class="fv-dashboard">
-      <%- include('dashboard-sidebar.ejs', { includeAddFile: false, includeAddFolder: true }) %>
+      <%- include('dashboard-sidebar.ejs', { includeAddFile: false, includeAddFolder: false }) %>
       <section class="fv-display-section">
         <h1 class="fv-page-title">Folder View<span>|</span> <span><%= folder.name %></span></h1>
-
+        
+        <ul class="fv-file-lister-box">
+          <% folder.files.forEach(file => { %>
+          <li class="fv-file-lister-box-entry">
+            <a href="/dashboard/files/<%= file.file_id %>">
+              <button>
+                <svg>
+                  <use xlink:href="#fv-file-svg-sym" />
+                </svg>
+                <p><%= file.name %></p>
+              </button>
+            </a>
+          </li>
+          <% }); %> 
+        </ul>
       </section>
     </main>
   </body>

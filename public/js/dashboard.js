@@ -156,7 +156,7 @@ async function fv_updateFilesToDisplay() {
    
     a.setAttribute("href", `dashboard/files/${file.id}`);
     use.setAttribute("href", "#fv-file-svg-sym");
-    li.setAttribute("class", "fv-recent-file");
+    li.setAttribute("class", "fv-file-lister-box-entry fv-recent-file");
     
     svg.appendChild(use);
     button.append(svg, p);
@@ -243,6 +243,7 @@ fv_divDropDownFolder
         .then(response => response.json())
         .then(data => console.log(data))
         .catch(err => console.error(err));
+        fv_divDropDownFolder.style.display = "none";
       } catch (err) {
         console.error(err)
       }
