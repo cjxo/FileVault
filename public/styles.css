@@ -656,9 +656,37 @@ input[type="checkbox"] {
 
 .fv-page-dropdown {
   position: absolute;
-  right: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  width: 200px;
+  right: 110%;
   top: 10%;
-  background-color: #EEEEEE;
+  background-color: #F7F7F7;
+}
+
+.fv-page-dropdown > button {
+  padding: 4px 4px;
+  border-radius: 2px;
+  display: flex;
+  background-color: transparent;
+  border: 1px solid transparent;
+  align-items: center;
+  font-size: 14px;
+  width: 100%;
+
+  > svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+  }
+}
+
+.fv-page-dropdown > button:hover {
+  background-color: var(--bluish0);
+  color: var(--bluish-white);
+  > svg {
+    fill: var(--bluish-white);
+  }
 }
 
 footer {

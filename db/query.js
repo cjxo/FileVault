@@ -159,6 +159,17 @@ const getFilesFromFolderID = async (folder_id, user_id) => {
   return { name: folderName.rows[0].name, files: rows };
 };
 
+const removeFilesFromFolder = async (fileIds, folderId) => {
+  const SQL = `
+    DELETE FROM fv_folder_file
+    WHERE (file_id = $1) AND (folder_id = $2);
+  `;
+
+  for (let idx = 0; idx < fileIds.length; ++idx) {
+    await pool.query(SQL, [fileIds[idx], folderId]);
+  }
+};
+
 export default {
   getUserFromUsername,
   getUserFromEmail,
@@ -173,4 +184,5 @@ export default {
   deleteFolderFromName,
   addFilesToFolder,
   getFilesFromFolderID,
+  removeFilesFromFolder,
 };

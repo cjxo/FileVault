@@ -435,6 +435,20 @@ const viewFolder = async (req, res, next) => {
   }
 };
 
+const removeFilesFromFolder = async (req, res, next) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+    await db.removeFilesFromFolder(req.body.fileIds, req.body.folderId);
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   get,
   postUpload,
@@ -447,4 +461,5 @@ export default {
   createNewFolder,
   addFilesToFolder,
   viewFolder,
+  removeFilesFromFolder,
 };
