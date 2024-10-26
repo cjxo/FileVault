@@ -28,7 +28,7 @@
         - [X] Open FOlder page.
         - [ ] Delete Folder.
         - [ ] Remove file on folder
-    - [ ] profile section in dashboard
-    - [ ] File details when clicked on file
+            - [ ] Complete Dropdown in Folder
+        - [ ] Unifying API for drop-downs
     - [ ] Share feature
     - [ ] Supabase

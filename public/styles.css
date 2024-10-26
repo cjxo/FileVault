@@ -579,6 +579,10 @@ input[type="checkbox"] {
   border-radius: 8px;
 }
 
+.fv-folder-entry > input[type="checkbox"] {
+  align-self: start;
+}
+
 .fv-folder-entry:hover {
   background-color: #EEEEEE;
 }
@@ -603,18 +607,58 @@ input[type="checkbox"] {
   border: 1px solid black;
 }
 
+.fv-page-title-div, .fv-page-title-right, .fv-page-title-left {
+  display: flex;
+  gap: 16px;
+}
+
+.fv-page-title-left {
+  font-size: 26px;
+}
+
+.fv-page-title-right {
+  margin-left: auto;
+  position: relative;
+}
+
+.fv-page-title-right > button {
+  padding: 8px;
+  border-radius: 4px;
+  display: none;
+  align-items: center;
+  align-self: center;
+  background-color: transparent;
+  border: 1px solid transparent;
+}
+
+.fv-page-title-right > button:hover {
+  background-color: #EEEEEE;
+}
+
+.fv-page-title-right > button > img {
+  width: 22px;
+  height: 22px;
+}
+
 .fv-page-title {
   font-size: 26px;
   font-weight: normal;
   margin-bottom: 16px;
 }
 
-.fv-page-title > span:first-child {
+.fv-page-title-left  > span:first-child {
   margin: 0px 16px;
 }
 
-.fv-page-title > span:last-child {
+.fv-page-title-left > span:last-child {
   color: grey;
+}
+
+.fv-page-dropdown {
+  position: absolute;
+  right: 100%;
+  top: 10%;
+  background-color: #EEEEEE;
 }
 
 footer {

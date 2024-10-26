@@ -19,7 +19,7 @@ app.use(express.static(path.join(directoryName, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(async (req, res, next) => {
+app.use((req, res, next) => {
   //console.log(req.user);
   //console.log(await db.checkFolderNameExists("HI", req.user.id));
   next();
