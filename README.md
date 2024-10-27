@@ -26,9 +26,9 @@
     - [ ] folder section in dashboard (also creation)
         - [X] Add file to folder.
         - [X] Open FOlder page.
-        - [ ] Delete Folder.
-        - [ ] Remove file on folder
-            - [ ] Complete Dropdown in Folder
+        - [X] Delete Folder.
+        - [X] Remove file on folder
+            - [X] Complete Dropdown in Folder
         - [ ] Unifying API for drop-downs
     - [ ] Share feature
-    - [ ] Supabase
+    - [ ] Supabase (WHAT IS THIS?)

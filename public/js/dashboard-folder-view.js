@@ -1,9 +1,8 @@
 const fv_btnOptions           = document.querySelector(".fv-page-title-right > button");
 const fv_divDropDownOptions   = document.querySelector(".fv-page-dropdown");
-const fv_btnLinks             = document.querySelector(".fv-page-dropdown > button");
+const fv_btnLinks             = document.querySelectorAll(".fv-page-dropdown > button");
 const fv_inpCheckboxes        = document.querySelectorAll('.fv-folder-display-grid input[type="checkbox"]');
-
-let g_inpCheckCount = 0;
+let g_inpCheckCount           = 0;
 
 fv_inpCheckboxes.forEach(input => {
   input.addEventListener("change", e => {
@@ -30,7 +29,7 @@ fv_btnOptions.addEventListener("click", e => {
   }
 });
 
-fv_btnLinks.addEventListener("click", async e => {
+fv_btnLinks[0].addEventListener("click", async e => {
   const clickedInputs  = document.querySelectorAll(".fv-folder-display-grid input:checked");
   const fileIds        = [];
 
@@ -60,6 +59,9 @@ fv_btnLinks.addEventListener("click", async e => {
 
     const json = await response.json();
     console.log(json);
+
+    fv_btnOptions.style.display = "none";
+    fv_divDropDownOptions.style.display = "none";
   } catch (err) {
     console.error(err);
   }

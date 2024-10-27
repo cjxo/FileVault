@@ -16,5 +16,6 @@ dashRouter.post('/folders/exists', dash.checkFolderNameExists);
 dashRouter.post('/folders/add', dash.addFilesToFolder);
 dashRouter.get('/folders/:id', dash.viewFolder);
 dashRouter.delete('/folders/remove-files', dash.removeFilesFromFolder);
+dashRouter.delete('/folders/delete', dash.deleteFolders);
 
 export default dashRouter;

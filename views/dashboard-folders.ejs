@@ -12,15 +12,34 @@
     <main class="fv-dashboard">
       <%- include('dashboard-sidebar.ejs', { includeAddFile: false, includeAddFolder: true }) %>
       <section class="fv-display-section fv-folder-display-section">
-        <h1 class="fv-page-title">Folders</h1>
+        <div class="fv-page-title-div">
+          <div class="fv-page-title-left">
+            <h1 class="fv-page-title">Folders</h1>
+          </div>
+
+          <div class="fv-page-title-right">
+            <div class="fv-page-dropdown">
+              <button>
+                <svg>
+                  <use xlink:href="#fv-file-delete-sym"/>
+                </svg>
+                <p>Delete Folder</p>
+              </button> 
+            </div>
+            <button>
+              <img src="/icons/dots-vertical.svg" alt="vertical dots" />
+            </button>
+          </div>
+        </div>
         <section class="fv-folder-display-grid">
           <% folders.forEach(folder => { %>
             <a href="/dashboard/folders/<%= folder.id %>" class="fv-folder-entry">
-            <svg>
-              <use xlink:href="#fv-file-folder-sym">
-            </svg>
-            <h3><%= folder.name %></h3>
-          </a>
+              <input type="checkbox" />
+              <svg>
+                <use xlink:href="#fv-file-folder-sym">
+              </svg>
+              <h3><%= folder.name %></h3>
+            </a>
           <% }); %> 
         </section>
       </section>

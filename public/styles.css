@@ -662,6 +662,8 @@ input[type="checkbox"] {
   right: 110%;
   top: 10%;
   background-color: #F7F7F7;
+  display: none;
+  flex-direction: column;
 }
 
 .fv-page-dropdown > button {

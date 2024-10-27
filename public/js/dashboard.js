@@ -199,15 +199,16 @@ fv_btnDDGenerals[0].addEventListener("click", async (e) => {
   }
 });
 
+let fv_amazingGlbTimeoutHack
 fv_btnDDGenerals[1].addEventListener("mouseenter", e => {
+  clearTimeout(fv_amazingGlbTimeoutHack)
   fv_divDropDownFolder.style.display = "flex";
 });
 
-let fv_amazingGlbTimeoutHack;
 fv_btnDDGenerals[1].addEventListener("mouseleave", e => { 
   fv_amazingGlbTimeoutHack = setTimeout(() => {
     fv_divDropDownFolder.style.display = "none";
-  }, 1000);
+  }, 500);
 });
 
 fv_divDropDownFolder.addEventListener("mouseenter", e=> {
