@@ -25,7 +25,7 @@ const createNewUpload = async (filename, upload_by_id) => {
   const UPLOADEDFILE_SQL = `
     INSERT INTO fv_uploaded_file (name, uploaded_by)
     VALUES ($1, $2)
-    ON CONFLICT (name) DO NOTHING;
+    ON CONFLICT DO NOTHING;
   `;
 
   await pool.query(UPLOADEDFILE_SQL, [filename, upload_by_id]);

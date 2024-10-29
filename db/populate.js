@@ -15,9 +15,10 @@ const SQL = `
 
   CREATE TABLE IF NOT EXISTS fv_uploaded_file (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    name VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255),
     upload_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    uploaded_by INTEGER REFERENCES fv_user (id)
+    uploaded_by INTEGER REFERENCES fv_user (id),
+    UNIQUE (name, uploaded_by);
   );
 
   CREATE TABLE IF NOT EXISTS fv_folder (

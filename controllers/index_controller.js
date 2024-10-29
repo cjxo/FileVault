@@ -1,6 +1,7 @@
 import db from '../db/query.js';
 import bcrypt from 'bcryptjs';
 import fs from 'node:fs';
+import storage from "../supabase/supabase.js";
 
 const get = (req, res) => {
   if (req.user) {
@@ -56,12 +57,10 @@ const postSignUp = async (req, res, next) => {
       const saltAndHash = await bcrypt.hash(req.body.password, 10);
       const id = await db.createNewUser(req.body.email, req.body.username, saltAndHash);
 
-      if (!fs.existsSync("./tmp_uploads")) {
-        fs.mkdirSync("./tmp_uploads");
-      }
+      const { data, error } = await storage.createBucket(id);
 
-      if (!fs.existsSync(`./tmp_uploads/${id}`)) {
-        fs.mkdirSync(`./tmp_uploads/${id}`);
+      if (error) {
+        throw error;
       }
       res.redirect("/sign-in");
     } catch (err) {

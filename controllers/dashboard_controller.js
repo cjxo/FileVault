@@ -1,8 +1,10 @@
 import fs from "node:fs";
 import fsp from "node:fs/promises";
+import stream from "node:stream";
 import path from "node:path";
 import db from "../db/query.js";
 import mime from 'mime-types';
+import storage from "../supabase/supabase.js";
 
 const fv_getKeyValueFromData = (data, contentHeader) => {
   const result = [];
@@ -76,66 +78,6 @@ const fv_getKeyValueFromData = (data, contentHeader) => {
   return result;
 }
 
-const fv_getFileDetails = async (filename, user_id, includeFileID) => {
-  const pathToFile = path.join(`./tmp_uploads/${user_id}`, filename);
-  const stat       = fs.lstatSync(pathToFile);
-
-  if (stat.isFile()) {
-    let name        = filename;
-    let type        = "";
-    let size        = stat.size;
-    let sizeRaw     = stat.size;
-    let sizeType    = "bytes";
-
-    const extensionIdx = filename.lastIndexOf('.');
-    if (extensionIdx !== -1) {
-      name = filename.substring(0, extensionIdx);
-      type = filename.substring(extensionIdx + 1, filename.length);
-    }
-
-    if (size < (50 * 1024)) {
-    } else if (size < (50000 * 1024)) {
-      size     = size / 1024;
-      sizeType = "kb";
-    } else if (size < (50000000 * 1024)) {
-      size     = (size / 1024) / 1024;
-      sizeType = "mb";
-    } else {
-      size     = ((size / 1024) / 1024) / 1024;
-      sizeType = "gb";
-    }
-
-    if (includeFileID) {
-      const id = await db.getFileIDFromFilename(filename, user_id);
-      if (id === null) {
-  throw new Error("failed to fetch ID from filename!");
-      }
-      return {
-        name: name,
-        type: type,
-        size: size,
-        sizeType: sizeType,
-        sizeBytes: sizeRaw,
-        shared: "Anyone With Link", // todo: query data base for shared data,
-        lastModified: stat.mtime,
-        id: id,
-      };
-    } else {
-      return {
-        name: name,
-        type: type,
-        size: size,
-        sizeType: sizeType,
-        sizeBytes: sizeRaw,
-        shared: "Anyone With Link", // todo: query data base for shared data,
-        lastModified: stat.mtime,
-      };
-    }
-  } else {
-    return null;
-  }
-};
-
 const get = async (req, res, next) => {
   if (!req.user) {
     res.redirect('/sign-in');
@@ -167,13 +109,13 @@ const postUpload = async (req, res) => {
     let hasError = false;
     for (let dataIdx = 0; dataIdx < data.length; ++dataIdx) {
       const d = data[dataIdx];
-      fs.writeFile(`./tmp_uploads/${req.user.id}/${d.filename}`, Buffer.from(d.data, 'binary'), 'binary', err => {
-        if (err) {
-          hasError = true;
-        }
-      });
-      
+
       await db.createNewUpload(d.filename, req.user.id);
+
+      const supa = await storage.createFile(req.user.id, d.filename, Buffer.from(d.data, 'binary'));
+      if (supa.error) {
+        console.log(supa.error);
+      }
     }
 
     if (hasError) {
@@ -202,15 +144,48 @@ const getUpload = async (req, res) => {
 
   try {
     if (req.get('X-Requested-With') === "FetchAPI") {
-      const dirs   = await fsp.readdir(`./tmp_uploads/${req.user.id}`);
       const result = [];
 
-      for (let idx = 0; idx < dirs.length; ++idx) {
-        const file = dirs[idx];
-        const fileDetails = await fv_getFileDetails(file, req.user.id, true);
-        if (fileDetails !== null) {
-          result.push(fileDetails);
+      const files = await storage.getFilesFromUser(req.user.id);
+      for (let idx = 0; idx < files.length; ++idx) {
+        const file      = files[idx];
+        const filename  = file.name;
+        let name        = filename;
+        let type        = "";
+        let size        = file.metadata.size;
+        let sizeRaw     = size;
+        let sizeType    = "bytes";
+
+        const extensionIdx = filename.lastIndexOf('.');
+        if (extensionIdx !== -1) {
+          name = filename.substring(0, extensionIdx);
+          type = filename.substring(extensionIdx + 1, filename.length);
         }
+
+        if (size < (50 * 1024)) {
+        } else if (size < (50000 * 1024)) {
+          size     = size / 1024;
+          sizeType = "kb";
+        } else if (size < (50000000 * 1024)) {
+          size     = (size / 1024) / 1024;
+          sizeType = "mb";
+        } else {
+          size     = ((size / 1024) / 1024) / 1024;
+          sizeType = "gb";
+        }
+        
+        const id = await db.getFileIDFromFilename(filename, req.user.id);
+
+        result.push({
+          name: name,
+          type: type,
+          size: size,
+          sizeType: sizeType,
+          sizeBytes: sizeRaw,
+          shared: "Anyone With Link", // todo: query data base for shared data,
+          lastModified: file.updated_at,
+          id: id, 
+        });
       }
 
       res.send(result);
@@ -240,16 +215,13 @@ const deleteFile = async (req, res) => {
       throw new Error("file does not exist!");
     }
 
-    fs.unlink(path.join(`./tmp_uploads/${req.user.id}`, filename), (err) => {
-      if (err) throw err;
-      
-      res.send(`
-        {
-          "status": 200,
-          "message": "successfully deleted file."
-        }
-      `);
-    });
+    await storage.deleteFilesFromUser(req.user.id, [filename]);
+    res.send(`
+      {
+        "status": 200,
+        "message": "successfully deleted file."
+      }
+    `); 
   } catch (err) {
     console.log(err);
     res.status(500).send(`
@@ -275,7 +247,42 @@ const getFile = async (req, res, next) => {
       throw new Error("Unable to get filename from FileID.");
     }
 
-    const fileDetails = await fv_getFileDetails(filename, req.user.id, false)
+    const details   = await storage.getFileFromUser(req.user.id, filename);
+    const file      = details[0];
+    let name        = filename;
+    let type        = "";
+    let size        = file.metadata.size;
+    let sizeRaw     = size;
+    let sizeType    = "bytes";
+
+    const extensionIdx = filename.lastIndexOf('.');
+    if (extensionIdx !== -1) {
+      name = filename.substring(0, extensionIdx);
+      type = filename.substring(extensionIdx + 1, filename.length);
+    }
+
+    if (size < (50 * 1024)) {
+    } else if (size < (50000 * 1024)) {
+      size     = size / 1024;
+      sizeType = "kb";
+    } else if (size < (50000000 * 1024)) {
+      size     = (size / 1024) / 1024;
+      sizeType = "mb";
+    } else {
+      size     = ((size / 1024) / 1024) / 1024;
+      sizeType = "gb";
+    }
+
+    const fileDetails = {
+      name: name,
+      type: type,
+      size: size,
+      sizeType: sizeType,
+      sizeBytes: sizeRaw,
+      shared: "Anyone With Link", // todo: query data base for shared data,
+      lastModified: file.updated_at,
+    };
+
     fileDetails.id = req.params.id;
     if (req.get('X-Requested-With') === "FetchAPI") {
       res.send(fileDetails);
@@ -300,25 +307,31 @@ const downloadFile = async (req, res, next) => {
       throw new Error("Unable to get filename from FileID.");
     }
 
-    const filepath = path.join(`./tmp_uploads/${req.user.id}/${filename}`);
+    const blob = await storage.downloadFileFromUser(req.user.id, filename);
+
+    /*const filepath = path.join(`./tmp_uploads/${req.user.id}/${filename}`);
     if (!fs.existsSync(filepath)) {
       throw new Error("file doesn't exist");
-    }
+    }*/
 
+    const details = await storage.getFileFromUser(req.user.id, filename);
     const mimeType = mime.lookup(filename) || 'application/octet-stream';
-    const details = await fv_getFileDetails(filename, req.user.id, false);
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-Type', mimeType);
-    res.setHeader('Content-Length', details.sizeBytes);
+    res.setHeader('Content-Length', details[0].metadata.size);
 
     // https://www.freecodecamp.org/news/node-js-streams-everything-you-need-to-know-c9141306be93/
-    const stream = fs.createReadStream(filepath);
+    const arraybuffer = await blob.arrayBuffer();
+    const buffer      = Buffer.from(arraybuffer);
+    // https://nodejs.org/api/stream.html#class-streampassthrough
+    const stream_ = new stream.PassThrough();
+    stream_.end(buffer);
 
-    stream.on('error', (err) => {
+    stream_.on('error', (err) => {
       throw err;
     });
 
-    stream.pipe(res);
+    stream_.pipe(res);
 
     /*
     fs.readFile(filepath, (err, data) => {

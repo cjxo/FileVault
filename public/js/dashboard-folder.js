@@ -67,16 +67,21 @@ fv_btnLinks[0].addEventListener("click", async e => {
 });
 
 fv_btnAddFolder.addEventListener("click", e => {
-  if (fv_secFolderDisplayGrid.querySelector("input") !== null) {
+  if (fv_secFolderDisplayGrid.querySelector('input[type="text"]') !== null) {
     return;
   }
-  // temporaries
-  const a       = document.createElement("a");
-  const svg     = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  const use     = document.createElementNS("http://www.w3.org/2000/svg", "use");
-  const inp     = document.createElement("input"); 
 
+  // temporaries
+  const a         = document.createElement("a");
+  const svg       = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const use       = document.createElementNS("http://www.w3.org/2000/svg", "use");
+  const inp       = document.createElement("input"); 
+  const inpCbox   = document.createElement("input");
+
+
+  inpCbox.setAttribute("type", "checkbox");
   inp.setAttribute("maxlength", "100");
+  inp.setAttribute("type", "text");
   inp.setAttribute("class", "fv-temp-folder-detail-input");
   a.setAttribute("href", "#");
   a.setAttribute("class", "fv-folder-entry");
@@ -84,7 +89,7 @@ fv_btnAddFolder.addEventListener("click", e => {
   use.setAttribute("href", "#fv-file-folder-sym");
   
   svg.appendChild(use);
-  a.append(svg, inp);
+  a.append(inpCbox, svg, inp);
   if (fv_secFolderDisplayGrid.firstChild) {
     fv_secFolderDisplayGrid.insertBefore(a, fv_secFolderDisplayGrid.firstChild);
   } else {
