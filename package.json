@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch app.js",
     "populate": "node ./db/populate.js",
-    "start": "node app.js"
+    "start": "node ./db/populate.js && node app.js"
   },
   "keywords": [],
   "author": "",
