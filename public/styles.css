@@ -102,8 +102,12 @@ main {
 }
 
 .fv-picture-demo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bluish-white);
   width: 700px;
-  height: auto;
+  height: 400px;
 }
 
 .fv-welcome-and-p {
@@ -688,6 +692,9 @@ footer {
 
   .fv-picture-demo {
     width: 480px;
+    height: 200px;
+    margin-top: 8px;
+    margin-bottom: 8px;
   }
 }
 

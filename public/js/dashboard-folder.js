@@ -1,4 +1,4 @@
-const fv_secFolderDisplayGrid = document.querySelector(".fv-folder-display-grid");
+const fv_secFolderDisplayGrid = document.querySelector(".fv-display-grid");
 const fv_btnAddFolder         = document.querySelector(".fv-file-input-select");
 
 const fv_btnOptions           = document.querySelector(".fv-page-title-right > button");
