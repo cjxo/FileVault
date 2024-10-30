@@ -424,6 +424,14 @@ main {
   flex-grow: 1;
 }
 
+.fv-file-lister-entry p {
+  overflow: hidden;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
 .fv-file-lister-entry > h4 {
   color: #AAAAAA;
   border-bottom: 1px solid black;
@@ -516,37 +524,8 @@ input[type="checkbox"] {
   height: auto;
 }
 
-.fv-uploaded-files-header button {
-  display: flex;
-  align-items: center;
-  padding: 6px;
-
-  background-color: transparent;
-  border: 1px solid gray;
-  border-radius: 4px;
-}
-
-.fv-uploaded-files-header button:hover {
-  border: 1px solid var(--bluish0);
-}
-
 .fv-uploaded-files-header > div {
   position: relative;
-}
-
-.fv-options-dropdown {
-  display: none;
-  right: 100%;
-  position: absolute;
-  background-color: #e1e1fa;
-  padding: 12px;
-  border-radius: 8px;
-  flex-direction: column;
-  width: 164px;
-}
-
-.fv-dd-folder {
-  right: 600%;
 }
 
 .fv-options-dropdown > button {
@@ -563,7 +542,7 @@ input[type="checkbox"] {
   margin-left: 8px;
 }
 
-.fv-folder-display-grid {
+.fv-display-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   /*justify-items: center;*/
@@ -621,7 +600,7 @@ input[type="checkbox"] {
   position: relative;
 }
 
-.fv-page-title-right > button {
+.fv-uploaded-files-header > div > button, .fv-page-title-right > button {
   padding: 8px;
   border-radius: 4px;
   display: none;
@@ -631,7 +610,8 @@ input[type="checkbox"] {
   border: 1px solid transparent;
 }
 
-.fv-page-title-right > button:hover {
+.fv-uploaded-files-header > div > button:hover,
+ .fv-page-title-right > button:hover {
   background-color: #EEEEEE;
 }
 
@@ -654,16 +634,20 @@ input[type="checkbox"] {
   color: grey;
 }
 
-.fv-page-dropdown {
+.fv-page-dropdown, .fv-dd-folder {
   position: absolute;
   padding: 8px;
   border-radius: 4px;
   width: 200px;
   right: 110%;
-  top: 10%;
+  top: 0%;
   background-color: #F7F7F7;
   display: none;
   flex-direction: column;
+}
+
+.fv-dd-folder {
+  right: 725%;
 }
 
 .fv-page-dropdown > button {

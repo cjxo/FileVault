@@ -136,6 +136,58 @@ const postUpload = async (req, res) => {
   });
 };
 
+const fv_fileDetailsFromSupabase = async (file, user_id) => {
+  const filename = file.name;
+
+  let name        = filename;
+  let type        = "";
+  let size        = file.metadata.size;
+  let sizeRaw     = size;
+  let sizeType    = "bytes";
+
+  const extensionIdx = filename.lastIndexOf('.');
+  if (extensionIdx !== -1) {
+    name = filename.substring(0, extensionIdx);
+    type = filename.substring(extensionIdx + 1, filename.length);
+  }
+  
+  if (size < (50 * 1024)) {
+  } else if (size < (50000 * 1024)) {
+    size     = size / 1024;
+    sizeType = "kb";
+  } else if (size < (50000000 * 1024)) {
+    size     = (size / 1024) / 1024;
+    sizeType = "mb";
+  } else {
+    size     = ((size / 1024) / 1024) / 1024;
+    sizeType = "gb";
+  }
+
+  if (user_id) {
+    const id = await db.getFileIDFromFilename(filename, user_id);
+    return {
+      name: name,
+      type: type,
+      size: size,
+      sizeType: sizeType,
+      sizeBytes: sizeRaw,
+      shared: "Anyone With Link", // todo: query data base for shared data,
+      lastModified: file.updated_at,
+      id: id, 
+    };
+  } else {
+    return {
+      name: name,
+      type: type,
+      size: size,
+      sizeType: sizeType,
+      sizeBytes: sizeRaw,
+      shared: "Anyone With Link", // todo: query data base for shared data,
+      lastModified: file.updated_at,
+    };
+  }
+}
+
 const getUpload = async (req, res) => {
   if (!req.user) {
     res.status(401).send(`{ "401": "unauthorized" }`);
@@ -148,44 +200,8 @@ const getUpload = async (req, res) => {
 
       const files = await storage.getFilesFromUser(req.user.id);
       for (let idx = 0; idx < files.length; ++idx) {
-        const file      = files[idx];
-        const filename  = file.name;
-        let name        = filename;
-        let type        = "";
-        let size        = file.metadata.size;
-        let sizeRaw     = size;
-        let sizeType    = "bytes";
-
-        const extensionIdx = filename.lastIndexOf('.');
-        if (extensionIdx !== -1) {
-          name = filename.substring(0, extensionIdx);
-          type = filename.substring(extensionIdx + 1, filename.length);
-        }
-
-        if (size < (50 * 1024)) {
-        } else if (size < (50000 * 1024)) {
-          size     = size / 1024;
-          sizeType = "kb";
-        } else if (size < (50000000 * 1024)) {
-          size     = (size / 1024) / 1024;
-          sizeType = "mb";
-        } else {
-          size     = ((size / 1024) / 1024) / 1024;
-          sizeType = "gb";
-        }
-        
-        const id = await db.getFileIDFromFilename(filename, req.user.id);
-
-        result.push({
-          name: name,
-          type: type,
-          size: size,
-          sizeType: sizeType,
-          sizeBytes: sizeRaw,
-          shared: "Anyone With Link", // todo: query data base for shared data,
-          lastModified: file.updated_at,
-          id: id, 
-        });
+        const details = await fv_fileDetailsFromSupabase(files[idx], req.user.id);
+        result.push(details);
       }
 
       res.send(result);
@@ -262,42 +278,8 @@ const getFile = async (req, res, next) => {
       throw new Error("Unable to get filename from FileID.");
     }
 
-    const details   = await storage.getFileFromUser(req.user.id, filename);
-    const file      = details[0];
-    let name        = filename;
-    let type        = "";
-    let size        = file.metadata.size;
-    let sizeRaw     = size;
-    let sizeType    = "bytes";
-
-    const extensionIdx = filename.lastIndexOf('.');
-    if (extensionIdx !== -1) {
-      name = filename.substring(0, extensionIdx);
-      type = filename.substring(extensionIdx + 1, filename.length);
-    }
-
-    if (size < (50 * 1024)) {
-    } else if (size < (50000 * 1024)) {
-      size     = size / 1024;
-      sizeType = "kb";
-    } else if (size < (50000000 * 1024)) {
-      size     = (size / 1024) / 1024;
-      sizeType = "mb";
-    } else {
-      size     = ((size / 1024) / 1024) / 1024;
-      sizeType = "gb";
-    }
-
-    const fileDetails = {
-      name: name,
-      type: type,
-      size: size,
-      sizeType: sizeType,
-      sizeBytes: sizeRaw,
-      shared: "Anyone With Link", // todo: query data base for shared data,
-      lastModified: file.updated_at,
-    };
-
+    const supabasefile   = await storage.getFileFromUser(req.user.id, filename);
+    const fileDetails    = await fv_fileDetailsFromSupabase(supabasefile);
     fileDetails.id = req.params.id;
     if (req.get('X-Requested-With') === "FetchAPI") {
       res.send(fileDetails);
@@ -333,7 +315,7 @@ const downloadFile = async (req, res, next) => {
     const mimeType = mime.lookup(filename) || 'application/octet-stream';
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-Type', mimeType);
-    res.setHeader('Content-Length', details[0].metadata.size);
+    res.setHeader('Content-Length', details.metadata.size);
 
     // https://www.freecodecamp.org/news/node-js-streams-everything-you-need-to-know-c9141306be93/
     const arraybuffer = await blob.arrayBuffer();

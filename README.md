@@ -37,5 +37,13 @@
         - search how https://www.youtube.com/watch?v=cN2RE6EpExE
         - [X] Remove tmp_uploads.
         - [X] Upload all files to delete instad of one by one in deleteFile @ dashboard_controller.js.
-        - [ ] Clean Up Repetitions in file details @ dashboard_controller.js and create reusable function
         - [X] Fix cancel folder add bug: When pressing escape, it doesn't cancel.
+
+# Issues
+
+- [X] Clean Up Repetitions in file details @ dashboard_controller.js and create reusable function
+- [ ] Responsiveness
+    - [X] Zooming in the file lister is quite bad. It falls apart when text is wrapping.
+    Either we switch to grid or ...?
+- [ ] Dropdown / buttons aren't disappearing when adding files to folders.
+

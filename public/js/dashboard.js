@@ -6,9 +6,9 @@ const fv_btnFileSelect         = document.querySelector(".fv-file-input-select")
 const fv_btnFileSubmit         = document.querySelector(".fv-file-input-select + button");
 const fv_ulRecentUploads       = document.querySelector(".fv-recent-files-lister");
 const fv_btnMoreOptions        = document.querySelector(".fv-uploaded-files-header > div > button");
-const fv_divDropDown           = document.querySelector(".fv-options-dropdown.fv-dd-general");
-const fv_divDropDownFolder     = document.querySelector(".fv-options-dropdown.fv-dd-folder");
-const fv_btnDDGenerals         = document.querySelectorAll(".fv-options-dropdown.fv-dd-general > button");
+const fv_divDropDown           = document.querySelector(".fv-page-dropdown.fv-dd-general");
+const fv_divDropDownFolder     = document.querySelector(".fv-page-dropdown.fv-dd-folder");
+const fv_btnDDGenerals         = document.querySelectorAll(".fv-page-dropdown.fv-dd-general > button");
 
 let fv_listerBtnsClickState  = 0;
 let fv_filesToDisplay          = [];
@@ -215,8 +215,10 @@ fv_btnDDGenerals[0].addEventListener("click", async (e) => {
 
 let fv_amazingGlbTimeoutHack
 fv_btnDDGenerals[1].addEventListener("mouseenter", e => {
-  clearTimeout(fv_amazingGlbTimeoutHack)
-  fv_divDropDownFolder.style.display = "flex";
+  clearTimeout(fv_amazingGlbTimeoutHack);
+  if (fv_divDropDownFolder.children.length) {
+    fv_divDropDownFolder.style.display = "flex";
+  }
 });
 
 fv_btnDDGenerals[1].addEventListener("mouseleave", e => { 

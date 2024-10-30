@@ -4,7 +4,7 @@ const fv_btnAddFolder         = document.querySelector(".fv-file-input-select");
 const fv_btnOptions           = document.querySelector(".fv-page-title-right > button");
 const fv_divDropDownOptions   = document.querySelector(".fv-page-dropdown");
 const fv_btnLinks             = document.querySelectorAll(".fv-page-dropdown > button");
-const fv_inpCheckboxes        = document.querySelectorAll('.fv-folder-display-grid input[type="checkbox"]');
+const fv_inpCheckboxes        = document.querySelectorAll('.fv-display-grid input[type="checkbox"]');
 let g_inpCheckCount           = 0;
 
 fv_inpCheckboxes.forEach(input => {

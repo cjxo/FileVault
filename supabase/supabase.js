@@ -36,7 +36,7 @@ const getFilesFromUser = async (userID) => {
 
   if (result.error) {
     throw result.error;
-  }
+  } 
 
   return result.data;
 };
@@ -51,7 +51,7 @@ const getFileFromUser = async (userID, filename) => {
     throw result.error;
   }
 
-  return result.data;
+  return result.data[0];
 };
 
 const deleteFilesFromUser = async (userID, files) => {
