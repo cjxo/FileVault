@@ -36,5 +36,6 @@
         - https://supabase.com/docs/guides/storage/security/access-control
         - search how https://www.youtube.com/watch?v=cN2RE6EpExE
         - [X] Remove tmp_uploads.
-        - [ ] Upload all files to delete instad of one by one in deleteFile @ dashboard_controller.js.
+        - [X] Upload all files to delete instad of one by one in deleteFile @ dashboard_controller.js.
         - [ ] Clean Up Repetitions in file details @ dashboard_controller.js and create reusable function
+        - [X] Fix cancel folder add bug: When pressing escape, it doesn't cancel.

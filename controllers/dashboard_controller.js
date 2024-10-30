@@ -233,6 +233,21 @@ const deleteFile = async (req, res) => {
   } 
 };
 
+const deleteFiles = async (req, res, next) => {
+  if (!req.user) {
+    res.status(401).send(`{ "401": "unauthorized" }`);
+    return;
+  }
+
+  try {
+    const filenames = await db.deleteFilesFromIDAndReturnFilenames(req.body.fileIds, req.user.id);
+    await storage.deleteFilesFromUser(req.user.id, filenames);
+    res.json({ statusCode: 200, message: "Successfully deleted file." });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const getFile = async (req, res, next) => {
   if (!req.user) {
     res.status(401).send(`{ "401": "unauthorized" }`);
@@ -479,8 +494,9 @@ const deleteFolders = async (req, res, next) => {
 export default {
   get,
   postUpload,
-  getUpload,
+getUpload,
   deleteFile,
+  deleteFiles, 
   getFile,
   downloadFile,
   getFolders,

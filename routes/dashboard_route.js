@@ -8,6 +8,7 @@ dashRouter.get('/all-files', (req, res) => { res.redirect("/") });
 dashRouter.post('/upload', dash.postUpload);
 dashRouter.get('/upload', dash.getUpload);
 dashRouter.delete('/files/delete/:id', dash.deleteFile);
+dashRouter.delete('/files/delete', dash.deleteFiles);
 dashRouter.get('/files/:id', dash.getFile);
 dashRouter.get('/files/download/:id/', dash.downloadFile);
 dashRouter.get('/folders', dash.getFolders);

@@ -5,7 +5,7 @@ const SQL = `
   -- DROP TABLE IF EXISTS fv_folder_file;
   -- DROP TABLE IF EXISTS fv_folder;
   -- DROP TABLE IF EXISTS fv_uploaded_file;
-  -- DROP TABLE IF EXISTS fv_user
+  -- DROP TABLE IF EXISTS fv_user;
   CREATE TABLE IF NOT EXISTS fv_user (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     username VARCHAR(128) UNIQUE NOT NULL,
@@ -18,7 +18,7 @@ const SQL = `
     name VARCHAR(255),
     upload_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     uploaded_by INTEGER REFERENCES fv_user (id),
-    UNIQUE (name, uploaded_by);
+    UNIQUE (name, uploaded_by)
   );
 
   CREATE TABLE IF NOT EXISTS fv_folder (

@@ -25,7 +25,7 @@ const createNewUpload = async (filename, upload_by_id) => {
   const UPLOADEDFILE_SQL = `
     INSERT INTO fv_uploaded_file (name, uploaded_by)
     VALUES ($1, $2)
-    ON CONFLICT DO NOTHING;
+    ON CONFLICT (name, uploaded_by) DO NOTHING;
   `;
 
   await pool.query(UPLOADEDFILE_SQL, [filename, upload_by_id]);
@@ -78,6 +78,23 @@ const deleteFileFromIDAndReturnFileName = async (file_id, user_id) => {
   await pool.query(DELETESQL, [user_id, file_id]);
 
   return selectResult.rows[0].name;
+};
+
+const deleteFilesFromIDAndReturnFilenames = async (fileIDS, user_id) => {
+  const DELETESQL = `
+    DELETE FROM fv_uploaded_file
+    WHERE (uploaded_by = $1) AND id IN ($2);
+  `;
+
+  const SELECTSQL = `
+    SELECT name FROM fv_uploaded_file
+    WHERE (uploaded_by = $1) AND id IN ($2);
+  `;
+
+  const selectResult = await pool.query(SELECTSQL, [user_id, fileIDS]);
+  await pool.query(DELETESQL, [user_id, fileIDS]);
+
+  return selectResult.rows.map(row => row.name);
 };
 
 const checkFolderNameExists = async (name, user_id) => {
@@ -189,6 +206,7 @@ export default {
   getFileIDFromFilename,
   getFilenameFromFileID,
   deleteFileFromIDAndReturnFileName,
+  deleteFilesFromIDAndReturnFilenames,
   checkFolderNameExists,
   createFolder,
   getFolders,

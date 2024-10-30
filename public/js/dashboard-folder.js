@@ -78,7 +78,6 @@ fv_btnAddFolder.addEventListener("click", e => {
   const inp       = document.createElement("input"); 
   const inpCbox   = document.createElement("input");
 
-
   inpCbox.setAttribute("type", "checkbox");
   inp.setAttribute("maxlength", "100");
   inp.setAttribute("type", "text");
@@ -100,6 +99,12 @@ fv_btnAddFolder.addEventListener("click", e => {
     inp.style.color = "black";
   });
 
+  inp.focus();
+
+  const removeA = () => {
+    a.remove();
+  };
+
   inp.addEventListener("keydown", (e) => {
     if (!e.repeat && (e.key === "Enter") && (inp.value !== "")) {
       fetch("/dashboard/folders/create", {
@@ -116,6 +121,7 @@ fv_btnAddFolder.addEventListener("click", e => {
           h3.textContent = inp.value;
           a.setAttribute("href", `folders/${data.id}`);
           a.appendChild(h3);
+          inp.removeEventListener("focusout", removeA);
           inp.remove(); 
         } else {
           inp.value = "Folder Already Exists!";
@@ -129,4 +135,6 @@ fv_btnAddFolder.addEventListener("click", e => {
       a.remove();
     }
   });
+
+  inp.addEventListener("focusout", removeA);
 });
