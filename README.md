@@ -45,5 +45,5 @@
 - [ ] Responsiveness
     - [X] Zooming in the file lister is quite bad. It falls apart when text is wrapping.
     Either we switch to grid or ...?
-- [ ] Dropdown / buttons aren't disappearing when adding files to folders.
-
+- [X] Dropdown / buttons aren't disappearing when adding files to folders.
+- [ ] Dropdown API

@@ -258,7 +258,14 @@ fv_divDropDownFolder
           body: JSON.stringify({ folder: button.textContent, fileIds: ids }),
         })
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => {
+          console.log(data);
+          selected.forEach(a => {
+            a.previousSibling.checked = false;
+          });
+          fv_btnMoreOptions.style.display = "none";
+          fv_divDropDown.style.display = "none";
+        })
         .catch(err => console.error(err));
         fv_divDropDownFolder.style.display = "none";
       } catch (err) {
