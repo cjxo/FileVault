@@ -83,18 +83,22 @@ const deleteFileFromIDAndReturnFileName = async (file_id, user_id) => {
 const deleteFilesFromIDAndReturnFilenames = async (fileIDS, user_id) => {
   const DELETESQL = `
     DELETE FROM fv_uploaded_file
-    WHERE (uploaded_by = $1) AND id IN ($2);
+    WHERE (uploaded_by = $1) AND id = $2;
   `;
 
   const SELECTSQL = `
     SELECT name FROM fv_uploaded_file
-    WHERE (uploaded_by = $1) AND id IN ($2);
+    WHERE (uploaded_by = $1) AND id = $2;
   `;
 
-  const selectResult = await pool.query(SELECTSQL, [user_id, fileIDS]);
-  await pool.query(DELETESQL, [user_id, fileIDS]);
+  const result = [];
+  for (let idx = 0; idx < fileIDS.length; ++idx) {
+    const select = await pool.query(SELECTSQL, [user_id, fileIDS[idx]]);
+    result.push(select.rows[0].name);
+    await pool.query(DELETESQL, [user_id, fileIDS[idx]]);
+  }
 
-  return selectResult.rows.map(row => row.name);
+  return result;
 };
 
 const checkFolderNameExists = async (name, user_id) => {

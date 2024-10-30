@@ -180,15 +180,29 @@ fv_btnDDGenerals[0].addEventListener("click", async (e) => {
   const deleteLinks = nameCate.querySelectorAll("input:checked + a");
 
   try {
+    const fileIDsToDelete = [];
     for (let delidx = 0; delidx < deleteLinks.length; ++delidx) {
-      const a = deleteLinks[delidx];
-      const idx = a.href.lastIndexOf("/");
-      const newHref = "dashboard/files/delete" + a.href.substring(idx, a.href.length);
+      const a      = deleteLinks[delidx];
+      const idx    = a.href.lastIndexOf("/");
+      const fileID = parseInt(a.href.substring(idx + 1, a.href.length));
 
-      const response = await fetch(newHref, { method: "DELETE" })
-      const data = await response.json();
-      console.log(data);
+      //const response = await fetch(newHref, { method: "DELETE" })
+      //const data = await response.json();
+      fileIDsToDelete.push(fileID);
     }
+    
+    const response = await fetch("dashboard/files/delete", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fileIds: fileIDsToDelete,
+      }),
+    })
+
+    const json = await response.json();
+    console.log(json);
     
     await fv_updateFilesToDisplay();
 
