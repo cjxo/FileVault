@@ -30,7 +30,7 @@ fv_btnOptions.addEventListener("click", e => {
 });
 
 fv_btnLinks[0].addEventListener("click", async e => {
-  const clickedInputs  = document.querySelectorAll(".fv-folder-display-grid input:checked");
+  const clickedInputs  = document.querySelectorAll(".fv-display-grid input:checked");
   const fileIds        = [];
 
   const folderHref                 = window.location.href;
